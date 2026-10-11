@@ -529,17 +529,22 @@ function Bookcase({
       {/* Back panel */}
       <mesh position={[0, 3.5, -D / 2 + 0.05]} receiveShadow>
         <boxGeometry args={[W - 0.2, H - 0.2, 0.05]} />
-        <meshStandardMaterial map={tex.woodDark} color="#2A1E10" roughness={0.9} />
+        <meshStandardMaterial map={tex.woodMed} color="#A67852" roughness={0.8} />
+      </mesh>
+      {/* Subtle warm wash on back panel (museum-light effect) */}
+      <mesh position={[0, 3.5, -D / 2 + 0.12]}>
+        <planeGeometry args={[W - 0.4, H - 0.4]} />
+        <meshBasicMaterial color="#FFD78A" transparent opacity={0.12} />
       </mesh>
 
       {/* Top crown molding (multi-layer) */}
       <mesh position={[0, H + 0.1, 0]} castShadow>
         <boxGeometry args={[W + 0.4, 0.3, D + 0.3]} />
-        <meshStandardMaterial map={tex.woodTop} color="#8B6F47" roughness={0.6} />
+        <meshStandardMaterial map={tex.woodTop} color="#D4A878" roughness={0.5} />
       </mesh>
       <mesh position={[0, H - 0.05, 0]} castShadow>
         <boxGeometry args={[W + 0.2, 0.15, D + 0.15]} />
-        <meshStandardMaterial map={tex.woodTop} color="#A67C52" roughness={0.6} />
+        <meshStandardMaterial map={tex.woodTop} color="#E0B888" roughness={0.5} />
       </mesh>
       {/* Dentil molding */}
       {Array.from({ length: 18 }).map((_, i) => {
@@ -547,7 +552,7 @@ function Bookcase({
         return (
           <mesh key={i} position={[x, H + 0.27, D / 2 + 0.15]} castShadow>
             <boxGeometry args={[0.05, 0.12, 0.04]} />
-            <meshStandardMaterial color="#8B6F47" roughness={0.7} />
+            <meshStandardMaterial color="#A67852" roughness={0.7} />
           </mesh>
         );
       })}
@@ -555,7 +560,7 @@ function Bookcase({
       {/* Top platform */}
       <mesh position={[0, H + 0.55, 0]} receiveShadow>
         <boxGeometry args={[W + 0.4, 0.1, D + 0.3]} />
-        <meshStandardMaterial map={tex.woodMed} color="#6F5436" roughness={0.7} />
+        <meshStandardMaterial map={tex.woodMed} color="#C8A070" roughness={0.55} />
       </mesh>
 
       {/* Pediment */}
@@ -571,11 +576,11 @@ function Bookcase({
       {/* Side panels */}
       <mesh position={[-(W + 0.1) / 2, 3.5, 0]} castShadow>
         <boxGeometry args={[0.25, H - 0.5, D + 0.2]} />
-        <meshStandardMaterial map={tex.woodMed} color="#6F5436" roughness={0.7} />
+        <meshStandardMaterial map={tex.woodMed} color="#B88860" roughness={0.55} />
       </mesh>
       <mesh position={[(W + 0.1) / 2, 3.5, 0]} castShadow>
         <boxGeometry args={[0.25, H - 0.5, D + 0.2]} />
-        <meshStandardMaterial map={tex.woodMed} color="#6F5436" roughness={0.7} />
+        <meshStandardMaterial map={tex.woodMed} color="#B88860" roughness={0.55} />
       </mesh>
       {/* Panel insets */}
       {[-1, 1].map((s) =>
@@ -594,18 +599,18 @@ function Bookcase({
       {/* Base + plinth */}
       <mesh position={[0, -0.15, 0]} castShadow>
         <boxGeometry args={[W + 0.2, 0.4, D + 0.2]} />
-        <meshStandardMaterial map={tex.woodMed} color="#5A3F22" roughness={0.7} />
+        <meshStandardMaterial map={tex.woodMed} color="#9A7048" roughness={0.6} />
       </mesh>
       <mesh position={[0, -0.4, 0]} castShadow>
         <boxGeometry args={[W + 0.4, 0.1, D + 0.4]} />
-        <meshStandardMaterial map={tex.woodDark} color="#3A1A04" roughness={0.8} />
+        <meshStandardMaterial map={tex.woodDark} color="#6A4422" roughness={0.7} />
       </mesh>
 
       {/* Feet */}
       {[-1, 1].map((s) => (
         <mesh key={s} position={[(W / 2 + 0.1) * s, -0.5, 0]} castShadow>
           <boxGeometry args={[0.25, 0.15, D + 0.4]} />
-          <meshStandardMaterial color="#3A1A04" roughness={0.8} />
+          <meshStandardMaterial color="#6A4422" roughness={0.7} />
         </mesh>
       ))}
 
@@ -1303,12 +1308,12 @@ function SceneInner({
 }) {
   return (
     <>
-      <fog attach="fog" args={["#E8D5A8", 22, 40]} />
-      <hemisphereLight args={["#FFE5B0", "#5A3A1F", 0.8]} />
-      <ambientLight intensity={0.7} color="#FFE5B0" />
+      <fog attach="fog" args={["#F0E0B8", 26, 48]} />
+      <hemisphereLight args={["#FFE8C0", "#6A4A2E", 1.4]} />
+      <ambientLight intensity={1.3} color="#FFE8C0" />
       <directionalLight
         position={[-8, 5, 2]}
-        intensity={2.2}
+        intensity={3.2}
         color="#FFE5B0"
         castShadow
         shadow-mapSize={[2048, 2048]}
@@ -1320,10 +1325,41 @@ function SceneInner({
       />
       <pointLight
         position={[0, 6.5, 2]}
-        intensity={2.0}
+        intensity={3.0}
         color="#FFD78A"
-        distance={16}
-        decay={1.5}
+        distance={18}
+        decay={1.4}
+      />
+      {/* 2 spotlights on bookcase from above */}
+      <spotLight
+        position={[-2.5, 7, 1.5]}
+        target-position={[-2.5, 1.5, -0.5]}
+        intensity={3.0}
+        angle={Math.PI / 5}
+        penumbra={0.5}
+        color="#FFE8C0"
+        distance={14}
+        decay={1.3}
+        castShadow
+      />
+      <spotLight
+        position={[2.5, 7, 1.5]}
+        target-position={[2.5, 1.5, -0.5]}
+        intensity={3.0}
+        angle={Math.PI / 5}
+        penumbra={0.5}
+        color="#FFE8C0"
+        distance={14}
+        decay={1.3}
+        castShadow
+      />
+      {/* Front fill */}
+      <pointLight
+        position={[0, 1.0, 4]}
+        intensity={1.0}
+        color="#FFE8C0"
+        distance={8}
+        decay={1.8}
       />
       <pointLight
         position={[0, 3, 5]}
@@ -1385,7 +1421,7 @@ export default function Scene({
       gl={{
         antialias: true,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.0,
+        toneMappingExposure: 1.5,
       }}
       camera={{ position: [0, 2.8, 15], fov: 50, near: 0.1, far: 100 }}
     >
