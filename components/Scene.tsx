@@ -50,13 +50,13 @@ function hash(s: string) {
 }
 
 function bookWidth(book: Book) {
-  return 0.32 + ((hash(book.id) * 3) % 22) / 100; // 0.32 - 0.54
+  return 0.32 + ((hash(book.id) * 3) % 14) / 100;
 }
 function bookHeight(book: Book) {
-  return 0.6 + ((hash(book.id) * 5) % 30) / 100; // 0.6 - 0.9
+  return 1.8 + ((hash(book.id) * 5) % 50) / 100;
 }
 function bookTilt(book: Book) {
-  return (((hash(book.id) * 7) % 7) - 3) * 0.006;
+  return (((hash(book.id) * 7) % 7) - 3) * 0.008;
 }
 
 // ============================================================
@@ -76,7 +76,6 @@ type TexCache = {
   winView: THREE.Texture;
   leathers: Record<string, THREE.Texture>;
   woodBust: THREE.Texture;
-  floorLight: THREE.Texture;
 };
 
 let _cache: TexCache | null = null;
@@ -87,7 +86,6 @@ function buildTextureCache(): TexCache {
   const woodLight = makeWoodTexture("#6F5436", "#3A2410");
   const woodTop = makeWoodTexture("#8B6F47", "#4A2E1A");
   const woodBust = makeWoodTexture("#4A2E1A", "#1A0E04");
-  const floorLight = makeWoodTexture("#E8D8B8", "#C9B080");
   const fabricRed = makeFabricTexture("#5A1F0E");
   const fabricDark = makeFabricTexture("#3A1A0A");
   const paper = makePaperTexture("#F5E8C8");
@@ -113,7 +111,6 @@ function buildTextureCache(): TexCache {
     rug,
     winView,
     leathers,
-    floorLight,
   };
   return _cache;
 }
@@ -512,429 +509,7 @@ function Telescope({ position }: { position: [number, number, number] }) {
 }
 
 // ============================================================
-// CURVED BOOKCASE — amphitheater style (modeled on reference)
-// ============================================================
-// Geometry params (used by all sub-components)
-const BC_R = 4.5;            // radius of curve (cylinder slice)
-const BC_GAP = 0.7;           // gap size in radians (open side toward camera, +Z)
-const BC_THETA = Math.PI * 2 - BC_GAP; // arc length (~320°, gap 40° at +Z)
-const BC_THETA_START = Math.PI / 2 + BC_GAP / 2; // start just past +Z
-const BC_HEIGHT = 6.0;
-const BC_Y_BASE = 0.0;        // bottom of bookcase
-const BC_Y_TOP = BC_Y_BASE + BC_HEIGHT;
-const BC_SHELF_DEPTH = 0.85;  // how far shelf extends inward from wall
-const BC_SHELF_THICK = 0.08;  // shelf plank thickness
-const BC_N_SEGMENTS = 28;     // box segments per shelf (smooth curve)
-const BC_LED_WIDTH = 0.015;   // LED strip thickness
-const BC_SHELVES_Y = [0.6, 2.5, 4.4]; // y positions of 3 shelves
-const BC_CENTER_Z = -3.0;     // cylinder center offset (pushes curve back)
-
-// Convert shelf-relative X to world (x,z) on the cylinder wall
-function shelfPoint(theta: number, radius: number) {
-  return {
-    x: Math.cos(theta) * radius,
-    z: Math.sin(theta) * radius,
-  };
-}
-
-// Convert shelf-relative X to a tangential angle (for book orientation)
-function shelfTangent(theta: number) {
-  // Tangent direction at this point on the circle, in world XZ
-  return theta + Math.PI / 2; // tangent is perpendicular to radial
-}
-
-// ============================================================
-// BACKING PANEL — flat panel on the wall behind the books, with
-// procedural packed-books texture so the shelf looks filled
-// ============================================================
-function BackingPanel({
-  y,
-  radius,
-  thetaStart,
-  thetaLength,
-  tex,
-}: {
-  y: number;
-  radius: number;
-  thetaStart: number;
-  thetaLength: number;
-  tex: THREE.Texture;
-}) {
-  // Approximate the curved panel as N thin segments
-  const segments = 48;
-  const segs = useMemo(() => {
-    const arr: { x: number; z: number; rotY: number; w: number; h: number }[] = [];
-    for (let i = 0; i < segments; i++) {
-      const t0 = i / segments;
-      const t1 = (i + 1) / segments;
-      const a0 = thetaStart + thetaLength * t0;
-      const a1 = thetaStart + thetaLength * t1;
-      const aMid = (a0 + a1) / 2;
-      const x = Math.cos(aMid) * radius;
-      const z = BC_CENTER_Z + Math.sin(aMid) * radius;
-      const arcLen = Math.abs(a1 - a0) * radius;
-      arr.push({
-        x,
-        z,
-        rotY: -aMid + Math.PI / 2,
-        w: arcLen + 0.05,
-        h: 1.6, // backing panel height
-      });
-    }
-    return arr;
-  }, [radius, thetaStart, thetaLength, segments]);
-
-  return (
-    <group>
-      {segs.map((s, i) => (
-        <mesh
-          key={i}
-          position={[s.x, y, s.z]}
-          rotation={[0, s.rotY, 0]}
-        >
-          <planeGeometry args={[s.w, s.h]} />
-          <meshStandardMaterial
-            map={tex}
-            roughness={0.85}
-            metalness={0.0}
-            side={THREE.DoubleSide}
-          />
-        </mesh>
-      ))}
-    </group>
-  );
-}
-
-// ============================================================
-// CURVED SHELF — composed of N box segments forming an arc
-// Each segment is a flat plank placed at a specific angle on the curve
-// ============================================================
-function CurvedShelf({
-  y,
-  innerRadius,
-  outerRadius,
-  thetaStart,
-  thetaLength,
-  thickness,
-  tex,
-  lightColor = "#FFE8C0",
-}: {
-  y: number;
-  innerRadius: number;
-  outerRadius: number;
-  thetaStart: number;
-  thetaLength: number;
-  thickness: number;
-  tex: TexCache;
-  lightColor?: string;
-}) {
-  const segments = 32;
-  const segmentsData = useMemo(() => {
-    const arr: { x: number; z: number; rotY: number; width: number }[] = [];
-    for (let i = 0; i < segments; i++) {
-      const t0 = i / segments;
-      const t1 = (i + 1) / segments;
-      const a0 = thetaStart + thetaLength * t0;
-      const a1 = thetaStart + thetaLength * t1;
-      const aMid = (a0 + a1) / 2;
-      const rMid = (innerRadius + outerRadius) / 2;
-      const x = Math.cos(aMid) * rMid;
-      const z = BC_CENTER_Z + Math.sin(aMid) * rMid;
-      const arcLen = Math.abs(a1 - a0) * rMid;
-      arr.push({
-        x,
-        z,
-        rotY: -aMid + Math.PI / 2,
-        width: arcLen + 0.02,
-      });
-    }
-    return arr;
-  }, [innerRadius, outerRadius, thetaStart, thetaLength, segments]);
-
-  const depth = outerRadius - innerRadius;
-
-  // Procedural "packed books" backing texture — rendered once per shelf
-  const packedBooksTex = useMemo(() => {
-    const W = 2048;
-    const H = 256;
-    const c = document.createElement("canvas");
-    c.width = W;
-    c.height = H;
-    const ctx = c.getContext("2d")!;
-    // Backdrop
-    ctx.fillStyle = "#2A1A08";
-    ctx.fillRect(0, 0, W, H);
-    // Sky/background
-    ctx.fillStyle = "#1A0E04";
-    ctx.fillRect(0, 0, W, H);
-    // Draw many book spines packed tight
-    const palette = [
-      "#8B2A1A", "#1E3A6E", "#1F5C2E", "#9A6F1A", "#5C2A8E",
-      "#0A5A6E", "#7A2A0E", "#8E1F4F", "#3A4A5A",
-      "#A04020", "#2A4F8A", "#2A7040", "#B8902A", "#7A3AAD",
-      "#1A6A7E", "#9A4020", "#A82A60", "#4A5A6A",
-    ];
-    let x = 0;
-    let seed = y * 1000; // unique per shelf
-    function rand() {
-      seed = (seed * 9301 + 49297) % 233280;
-      return seed / 233280;
-    }
-    while (x < W) {
-      const bookW = 8 + Math.floor(rand() * 18); // 8-26 px
-      const colorIdx = Math.floor(rand() * palette.length);
-      ctx.fillStyle = palette[colorIdx];
-      ctx.fillRect(x, 4, bookW, H - 8);
-      // Gold band occasionally
-      if (rand() > 0.6) {
-        ctx.fillStyle = "#DAA520";
-        ctx.fillRect(x, H * 0.3, bookW, 3);
-      }
-      // Subtle vertical line at top/bottom
-      ctx.fillStyle = "rgba(0,0,0,0.3)";
-      ctx.fillRect(x, 4, 1, H - 8);
-      x += bookW + 1;
-    }
-    const t = new THREE.CanvasTexture(c);
-    t.colorSpace = THREE.SRGBColorSpace;
-    t.wrapS = THREE.RepeatWrapping;
-    t.wrapT = THREE.ClampToEdgeWrapping;
-    return t;
-  }, [y]);
-
-  return (
-    <group>
-      {/* Shelf plank segments */}
-      {segmentsData.map((seg, i) => (
-        <mesh
-          key={i}
-          position={[seg.x, y, seg.z]}
-          rotation={[0, seg.rotY, 0]}
-          castShadow
-          receiveShadow
-        >
-          <boxGeometry args={[seg.width, thickness, depth]} />
-          <meshStandardMaterial
-            map={tex.woodLight}
-            color="#D8B888"
-            roughness={0.6}
-            metalness={0.05}
-          />
-        </mesh>
-      ))}
-      {/* Backing panel with packed-books texture (flat panel on the wall side) */}
-      <BackingPanel
-        y={y + 0.6}
-        radius={outerRadius + 0.005}
-        thetaStart={thetaStart}
-        thetaLength={thetaLength}
-        tex={packedBooksTex}
-      />
-      {segmentsData.map((seg, i) => (
-        <mesh
-          key={`led-${i}`}
-          position={[seg.x, y - thickness / 2 - 0.005, seg.z]}
-          rotation={[0, seg.rotY, 0]}
-        >
-          <boxGeometry args={[seg.width, 0.015, 0.04]} />
-          <meshStandardMaterial
-            color={lightColor}
-            emissive={lightColor}
-            emissiveIntensity={2.0}
-            toneMapped={false}
-          />
-        </mesh>
-      ))}
-    </group>
-  );
-}
-
-// ============================================================
-// CURVED VERTICAL DIVIDERS (between shelf bands, optional, for visual interest)
-// ============================================================
-function CurvedDivider({
-  yMin,
-  yMax,
-  theta,
-  innerRadius,
-  outerRadius,
-  tex,
-}: {
-  yMin: number;
-  yMax: number;
-  theta: number;
-  innerRadius: number;
-  outerRadius: number;
-  tex: TexCache;
-}) {
-  const rMid = (innerRadius + outerRadius) / 2;
-  const x = Math.cos(theta) * rMid;
-  const z = Math.sin(theta) * rMid;
-  const depth = outerRadius - innerRadius;
-  return (
-    <mesh
-      position={[x, (yMin + yMax) / 2, z]}
-      rotation={[0, -theta + Math.PI / 2, 0]}
-      castShadow
-    >
-      <boxGeometry args={[0.04, yMax - yMin, depth]} />
-      <meshStandardMaterial
-        map={tex.woodLight}
-        color="#C9A878"
-        roughness={0.6}
-      />
-    </mesh>
-  );
-}
-
-// ============================================================
-// BACK WALL — cylindrical section behind the shelves
-// ============================================================
-function CurvedBackWall({ tex }: { tex: TexCache }) {
-  return (
-    <mesh
-      position={[0, (BC_Y_BASE + BC_Y_TOP) / 2, BC_CENTER_Z]}
-      rotation={[0, 0, 0]}
-    >
-      <cylinderGeometry
-        args={[
-          BC_R + 0.1,
-          BC_R + 0.1,
-          BC_HEIGHT + 0.1,
-          64,
-          1,
-          true,
-          BC_THETA_START - 0.05,
-          BC_THETA + 0.1,
-        ]}
-      />
-      <meshStandardMaterial
-        map={tex.woodLight}
-        color="#F0D8B0"
-        roughness={0.5}
-        metalness={0.0}
-        side={THREE.BackSide}
-      />
-    </mesh>
-  );
-}
-
-// ============================================================
-// TOP CAP — curved cap at top of bookcase
-// ============================================================
-function CurvedTopCap({ tex }: { tex: TexCache }) {
-  return (
-    <mesh
-      position={[0, BC_Y_TOP + 0.05, BC_CENTER_Z]}
-      rotation={[Math.PI / 2, 0, 0]}
-    >
-      <ringGeometry
-        args={[
-          0.5,
-          BC_R + 0.15,
-          64,
-          1,
-          BC_THETA_START,
-          BC_THETA,
-        ]}
-      />
-      <meshStandardMaterial
-        map={tex.woodTop}
-        color="#E8C898"
-        roughness={0.5}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
-  );
-}
-
-// ============================================================
-// CURVED SEAT — 2-3 platform levels in front (amphitheater steps)
-// ============================================================
-function CurvedSeat({
-  y,
-  innerRadius,
-  outerRadius,
-  thetaStart,
-  thetaLength,
-  tex,
-}: {
-  y: number;
-  innerRadius: number;
-  outerRadius: number;
-  thetaStart: number;
-  thetaLength: number;
-  tex: TexCache;
-}) {
-  const segments = 32;
-  const segmentsData = useMemo(() => {
-    const arr: { x: number; z: number; rotY: number; width: number }[] = [];
-    for (let i = 0; i < segments; i++) {
-      const t0 = i / segments;
-      const t1 = (i + 1) / segments;
-      const a0 = thetaStart + thetaLength * t0;
-      const a1 = thetaStart + thetaLength * t1;
-      const aMid = (a0 + a1) / 2;
-      const rMid = (innerRadius + outerRadius) / 2;
-      const x = Math.cos(aMid) * rMid;
-      const z = BC_CENTER_Z + Math.sin(aMid) * rMid;
-      const arcLen = Math.abs(a1 - a0) * rMid;
-      arr.push({
-        x,
-        z,
-        rotY: -aMid + Math.PI / 2,
-        width: arcLen + 0.02,
-      });
-    }
-    return arr;
-  }, [innerRadius, outerRadius, thetaStart, thetaLength, segments]);
-
-  const depth = outerRadius - innerRadius;
-
-  return (
-    <group>
-      {segmentsData.map((seg, i) => (
-        <mesh
-          key={i}
-          position={[seg.x, y, seg.z]}
-          rotation={[0, seg.rotY, 0]}
-          castShadow
-          receiveShadow
-        >
-          <boxGeometry args={[seg.width, 0.18, depth]} />
-          <meshStandardMaterial
-            map={tex.woodLight}
-            color="#E0C898"
-            roughness={0.55}
-            metalness={0.05}
-          />
-        </mesh>
-      ))}
-      {segmentsData.map((seg, i) => (
-        <mesh
-          key={`seat-led-${i}`}
-          position={[
-            seg.x + Math.cos(seg.rotY - Math.PI / 2) * (-depth / 2 + 0.05),
-            y - 0.08,
-            seg.z + Math.sin(seg.rotY - Math.PI / 2) * (-depth / 2 + 0.05),
-          ]}
-          rotation={[0, seg.rotY, 0]}
-        >
-          <boxGeometry args={[seg.width, 0.012, 0.025]} />
-          <meshStandardMaterial
-            color="#FFE8C0"
-            emissive="#FFE8C0"
-            emissiveIntensity={1.5}
-            toneMapped={false}
-          />
-        </mesh>
-      ))}
-    </group>
-  );
-}
-
-// ============================================================
-// BOOKCASE — main component
+// BOOKCASE 3D
 // ============================================================
 function Bookcase({
   topics,
@@ -945,197 +520,115 @@ function Bookcase({
   onBookClick: (topic: Topic, book: Book) => void;
   tex: TexCache;
 }) {
-  return (
-    <group position={[0, 0, 0]}>
-      {/* Curved back wall */}
-      <CurvedBackWall tex={tex} />
-      {/* Top cap (slight overhang) */}
-      <CurvedTopCap tex={tex} />
+  const W = 8.5;
+  const H = 7.0;
+  const D = 1.2;
 
-      {/* 3 curved shelves with books */}
-      {SHELVES.map((shelf, idx) => {
-        const y = BC_SHELVES_Y[idx];
+  return (
+    <group position={[0, 0, -0.5]}>
+      {/* Back panel */}
+      <mesh position={[0, 3.5, -D / 2 + 0.05]} receiveShadow>
+        <boxGeometry args={[W - 0.2, H - 0.2, 0.05]} />
+        <meshStandardMaterial map={tex.woodDark} color="#2A1E10" roughness={0.9} />
+      </mesh>
+
+      {/* Top crown molding (multi-layer) */}
+      <mesh position={[0, H + 0.1, 0]} castShadow>
+        <boxGeometry args={[W + 0.4, 0.3, D + 0.3]} />
+        <meshStandardMaterial map={tex.woodTop} color="#8B6F47" roughness={0.6} />
+      </mesh>
+      <mesh position={[0, H - 0.05, 0]} castShadow>
+        <boxGeometry args={[W + 0.2, 0.15, D + 0.15]} />
+        <meshStandardMaterial map={tex.woodTop} color="#A67C52" roughness={0.6} />
+      </mesh>
+      {/* Dentil molding */}
+      {Array.from({ length: 18 }).map((_, i) => {
+        const x = -W / 2 + 0.3 + i * ((W - 0.6) / 17);
+        return (
+          <mesh key={i} position={[x, H + 0.27, D / 2 + 0.15]} castShadow>
+            <boxGeometry args={[0.05, 0.12, 0.04]} />
+            <meshStandardMaterial color="#8B6F47" roughness={0.7} />
+          </mesh>
+        );
+      })}
+
+      {/* Top platform */}
+      <mesh position={[0, H + 0.55, 0]} receiveShadow>
+        <boxGeometry args={[W + 0.4, 0.1, D + 0.3]} />
+        <meshStandardMaterial map={tex.woodMed} color="#6F5436" roughness={0.7} />
+      </mesh>
+
+      {/* Pediment */}
+      <mesh position={[0, H + 1.0, 0]} castShadow>
+        <coneGeometry args={[0.5, 0.6, 3]} />
+        <meshStandardMaterial color="#B8860B" metalness={0.6} roughness={0.35} />
+      </mesh>
+      <mesh position={[0, H + 1.0, 0]} castShadow>
+        <sphereGeometry args={[0.08, 12, 8]} />
+        <meshStandardMaterial color="#DAA520" metalness={0.7} roughness={0.3} />
+      </mesh>
+
+      {/* Side panels */}
+      <mesh position={[-(W + 0.1) / 2, 3.5, 0]} castShadow>
+        <boxGeometry args={[0.25, H - 0.5, D + 0.2]} />
+        <meshStandardMaterial map={tex.woodMed} color="#6F5436" roughness={0.7} />
+      </mesh>
+      <mesh position={[(W + 0.1) / 2, 3.5, 0]} castShadow>
+        <boxGeometry args={[0.25, H - 0.5, D + 0.2]} />
+        <meshStandardMaterial map={tex.woodMed} color="#6F5436" roughness={0.7} />
+      </mesh>
+      {/* Panel insets */}
+      {[-1, 1].map((s) =>
+        [0, 1, 2].map((idx) => (
+          <mesh
+            key={`${s}-${idx}`}
+            position={[s * ((W + 0.1) / 2 + 0.01), 1.0 + idx * 2.0, 0]}
+            rotation={[0, s * (Math.PI / 2), 0]}
+          >
+            <planeGeometry args={[0.7, 1.6]} />
+            <meshStandardMaterial color="#5A3A1F" roughness={0.8} />
+          </mesh>
+        ))
+      )}
+
+      {/* Base + plinth */}
+      <mesh position={[0, -0.15, 0]} castShadow>
+        <boxGeometry args={[W + 0.2, 0.4, D + 0.2]} />
+        <meshStandardMaterial map={tex.woodMed} color="#5A3F22" roughness={0.7} />
+      </mesh>
+      <mesh position={[0, -0.4, 0]} castShadow>
+        <boxGeometry args={[W + 0.4, 0.1, D + 0.4]} />
+        <meshStandardMaterial map={tex.woodDark} color="#3A1A04" roughness={0.8} />
+      </mesh>
+
+      {/* Feet */}
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[(W / 2 + 0.1) * s, -0.5, 0]} castShadow>
+          <boxGeometry args={[0.25, 0.15, D + 0.4]} />
+          <meshStandardMaterial color="#3A1A04" roughness={0.8} />
+        </mesh>
+      ))}
+
+      {/* Ornaments on top */}
+      <Vase position={[-3, H + 0.65, 0]} />
+      <Globe position={[-1.2, H + 0.65, 0]} />
+      <Hourglass position={[1.2, H + 0.65, 0]} />
+      <BookStack position={[2.8, H + 0.65, 0]} />
+      <Telescope position={[3.8, H + 0.65, 0]} />
+
+      {/* Shelves */}
+      {SHELVES.map((shelf) => {
         const shelfTopics = shelf.ids
           .map((id) => topics.find((t) => t.id === id))
           .filter(Boolean) as Topic[];
-
-        const thetaStart = BC_THETA_START;
-        const thetaLength = BC_THETA;
-
         return (
-          <group key={shelf.num}>
-            <CurvedShelf
-              y={y}
-              innerRadius={BC_R - BC_SHELF_DEPTH}
-              outerRadius={BC_R}
-              thetaStart={thetaStart}
-              thetaLength={thetaLength}
-              thickness={BC_SHELF_THICK}
-              tex={tex}
-            />
-
-            {(() => {
-              const shelfBooks: { book: Book; topic: Topic }[] = [];
-              shelfTopics.forEach((t) =>
-                t.books.forEach((b) => shelfBooks.push({ book: b, topic: t }))
-              );
-
-              const topicArc = thetaLength / shelfTopics.length;
-              const bookPositions: {
-                book: Book;
-                topic: Topic;
-                pos: [number, number, number];
-                rotY: number;
-              }[] = [];
-
-              shelfTopics.forEach((topic, tIdx) => {
-                const topicBooks = shelfBooks.filter((sb) => sb.topic.id === topic.id);
-                const startAngle = thetaStart + 0.05 + tIdx * topicArc;
-                const topicBookWidth = topicArc / topicBooks.length;
-                topicBooks.forEach((sb, bIdx) => {
-                  const a = startAngle + bIdx * topicBookWidth + topicBookWidth / 2;
-                  // Place book at the front edge of the shelf (closer to camera)
-                  const rBook = BC_R - BC_SHELF_DEPTH * 0.3;
-                  const x = Math.cos(a) * rBook;
-                  const z = BC_CENTER_Z + Math.sin(a) * rBook;
-                  const rotY = a;
-                  // Position book so its bottom sits on the shelf
-                  const bookH = bookHeight(sb.book);
-                  bookPositions.push({
-                    book: sb.book,
-                    topic: sb.topic,
-                    pos: [x, y + BC_SHELF_THICK / 2 + bookH / 2, z],
-                    rotY,
-                  });
-                });
-              });
-
-              return bookPositions.map((bp, i) => (
-                <CurvedBook
-                  key={bp.book.id}
-                  book={bp.book}
-                  topic={bp.topic}
-                  position={bp.pos}
-                  rotY={bp.rotY}
-                  onClick={() => onBookClick(bp.topic, bp.book)}
-                  tex={tex}
-                />
-              ));
-            })()}
-          </group>
-        );
-      })}
-
-      {/* Curved seat platforms in front */}
-      <CurvedSeat
-        y={-0.05}
-        innerRadius={BC_R - 3.5}
-        outerRadius={BC_R - 1.5}
-        thetaStart={BC_THETA_START}
-        thetaLength={BC_THETA}
-        tex={tex}
-      />
-      <CurvedSeat
-        y={0.25}
-        innerRadius={BC_R - 2.0}
-        outerRadius={BC_R - 1.0}
-        thetaStart={BC_THETA_START}
-        thetaLength={BC_THETA}
-        tex={tex}
-      />
-
-      {/* Plants integrated on shelves */}
-      <IntegratedPlant
-        position={[
-          Math.cos(BC_THETA_START + 0.5) * (BC_R - 0.15),
-          BC_SHELVES_Y[2] + 0.1,
-          BC_CENTER_Z + Math.sin(BC_THETA_START + 0.5) * (BC_R - 0.15),
-        ]}
-      />
-      <IntegratedPlant
-        position={[
-          Math.cos(BC_THETA_START + BC_THETA - 0.5) * (BC_R - 0.15),
-          BC_SHELVES_Y[1] + 0.1,
-          BC_CENTER_Z + Math.sin(BC_THETA_START + BC_THETA - 0.5) * (BC_R - 0.15),
-        ]}
-      />
-      <IntegratedPlant
-        position={[
-          Math.cos(0) * (BC_R - 0.15),
-          BC_SHELVES_Y[0] + 0.1,
-          BC_CENTER_Z + Math.sin(0) * (BC_R - 0.15),
-        ]}
-      />
-    </group>
-  );
-}
-
-// ============================================================
-// CURVED BOOK — book that follows the curve (slightly rotated to face out)
-// Same BookMesh, but with position + rotY props
-// ============================================================
-function CurvedBook({
-  book,
-  topic,
-  position,
-  rotY,
-  onClick,
-  tex,
-}: {
-  book: Book;
-  topic: Topic;
-  position: [number, number, number];
-  rotY: number;
-  onClick: () => void;
-  tex: TexCache;
-}) {
-  return (
-    <group position={position} rotation={[0, rotY, 0]}>
-      <BookMesh
-        book={book}
-        topic={topic}
-        position={[0, 0, 0]}
-        onClick={onClick}
-        tex={tex}
-      />
-    </group>
-  );
-}
-
-// ============================================================
-// INTEGRATED PLANT — plant placed on a shelf (no pot visible)
-// ============================================================
-function IntegratedPlant({ position }: { position: [number, number, number] }) {
-  return (
-    <group position={position}>
-      {/* Pot (small, low) */}
-      <mesh position={[0, 0.08, 0]} castShadow>
-        <cylinderGeometry args={[0.18, 0.14, 0.16, 16]} />
-        <meshStandardMaterial color="#2A1A08" roughness={0.8} />
-      </mesh>
-      {/* Leaves */}
-      {Array.from({ length: 7 }).map((_, i) => {
-        const a = (i / 7) * Math.PI * 2;
-        const h = 0.35 + (i % 3) * 0.1;
-        return (
-          <group
-            key={i}
-            position={[Math.cos(a) * 0.12, 0.2 + h / 2, Math.sin(a) * 0.12]}
-            rotation={[
-              (i % 2 === 0 ? 1 : -1) * 0.3,
-              -a,
-              (i % 2 === 0 ? 1 : -1) * 0.4,
-            ]}
-          >
-            <mesh castShadow>
-              <boxGeometry args={[0.22, h, 0.04]} />
-              <meshStandardMaterial
-                color={i % 2 === 0 ? "#3A5A20" : "#4A6B2C"}
-                roughness={0.7}
-                side={THREE.DoubleSide}
-              />
-            </mesh>
-          </group>
+          <BookcaseShelf
+            key={shelf.num}
+            shelf={shelf}
+            topics={shelfTopics}
+            onBookClick={onBookClick}
+            tex={tex}
+          />
         );
       })}
     </group>
@@ -1143,62 +636,66 @@ function IntegratedPlant({ position }: { position: [number, number, number] }) {
 }
 
 // ============================================================
-// ROOM — light, bright, modern (matches reference design)
+// ROOM
 // ============================================================
 function Room({ tex }: { tex: TexCache }) {
   return (
     <group>
-      {/* Back wall (lighter, more open) */}
-      <mesh position={[0, 4, -8]} receiveShadow>
-        <planeGeometry args={[28, 12]} />
-        <meshStandardMaterial map={tex.wallTex} color="#F0E2C8" roughness={0.9} />
+      <mesh position={[0, 3, -7]} receiveShadow>
+        <planeGeometry args={[24, 10]} />
+        <meshStandardMaterial map={tex.wallTex} color="#D8C49A" roughness={0.95} />
       </mesh>
-      {/* Side walls */}
-      <mesh position={[-14, 4, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
-        <planeGeometry args={[18, 12]} />
-        <meshStandardMaterial map={tex.wallTex} color="#F0E2C8" roughness={0.9} />
+      <mesh position={[-12, 3, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
+        <planeGeometry args={[14, 10]} />
+        <meshStandardMaterial map={tex.wallTex} color="#D8C49A" roughness={0.95} />
       </mesh>
-      <mesh position={[14, 4, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
-        <planeGeometry args={[18, 12]} />
-        <meshStandardMaterial map={tex.wallTex} color="#F0E2C8" roughness={0.9} />
+      <mesh position={[12, 3, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
+        <planeGeometry args={[14, 10]} />
+        <meshStandardMaterial map={tex.wallTex} color="#D8C49A" roughness={0.95} />
       </mesh>
-      {/* Ceiling (with skylight) */}
-      <mesh position={[0, 9, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[28, 18]} />
-        <meshStandardMaterial color="#F8F0E0" roughness={0.95} />
+      <mesh position={[0, 7, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[24, 14]} />
+        <meshStandardMaterial color="#E8DCB8" roughness={0.95} />
       </mesh>
-      {/* Skylight glow */}
-      <mesh position={[0, 8.95, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[6, 4]} />
-        <meshBasicMaterial color="#FFF5D8" toneMapped={false} />
-      </mesh>
-      {/* Light wood floor (matches reference) */}
-      <mesh position={[0, -0.5, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[28, 18]} />
+      <mesh position={[0, -0.6, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[24, 14]} />
         <meshStandardMaterial
-          map={tex.floorLight}
-          color="#E8D8B8"
-          roughness={0.4}
+          map={tex.woodDark}
+          color="#3A2412"
+          roughness={0.55}
           metalness={0.1}
         />
       </mesh>
+      {/* Wainscoting */}
+      <mesh position={[0, 0.2, -6.95]} receiveShadow>
+        <boxGeometry args={[24, 1.2, 0.06]} />
+        <meshStandardMaterial map={tex.woodMed} color="#8B6F47" roughness={0.7} />
+      </mesh>
+      <mesh position={[-11.95, 0.2, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
+        <boxGeometry args={[14, 1.2, 0.06]} />
+        <meshStandardMaterial map={tex.woodMed} color="#8B6F47" roughness={0.7} />
+      </mesh>
+      <mesh position={[11.95, 0.2, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
+        <boxGeometry args={[14, 1.2, 0.06]} />
+        <meshStandardMaterial map={tex.woodMed} color="#8B6F47" roughness={0.7} />
+      </mesh>
       {/* Crown molding (top) */}
-      <mesh position={[0, 8.5, -7.95]} receiveShadow>
-        <boxGeometry args={[28, 0.3, 0.08]} />
-        <meshStandardMaterial map={tex.woodTop} color="#D4B888" roughness={0.55} />
+      <mesh position={[0, 6.8, -6.95]} receiveShadow>
+        <boxGeometry args={[24, 0.4, 0.1]} />
+        <meshStandardMaterial map={tex.woodTop} color="#A67C52" roughness={0.7} />
       </mesh>
-      <mesh position={[-13.95, 8.5, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
-        <boxGeometry args={[18, 0.3, 0.08]} />
-        <meshStandardMaterial map={tex.woodTop} color="#D4B888" roughness={0.55} />
+      <mesh position={[-11.95, 6.8, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
+        <boxGeometry args={[14, 0.4, 0.1]} />
+        <meshStandardMaterial map={tex.woodTop} color="#A67C52" roughness={0.7} />
       </mesh>
-      <mesh position={[13.95, 8.5, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
-        <boxGeometry args={[18, 0.3, 0.08]} />
-        <meshStandardMaterial map={tex.woodTop} color="#D4B888" roughness={0.55} />
+      <mesh position={[11.95, 6.8, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
+        <boxGeometry args={[14, 0.4, 0.1]} />
+        <meshStandardMaterial map={tex.woodTop} color="#A67C52" roughness={0.7} />
       </mesh>
       {/* Baseboard */}
-      <mesh position={[0, -0.35, -7.95]} receiveShadow>
-        <boxGeometry args={[28, 0.15, 0.04]} />
-        <meshStandardMaterial color="#A68A5A" roughness={0.6} />
+      <mesh position={[0, -0.5, -6.95]} receiveShadow>
+        <boxGeometry args={[24, 0.2, 0.04]} />
+        <meshStandardMaterial color="#2A1A08" roughness={0.8} />
       </mesh>
     </group>
   );
@@ -1390,43 +887,43 @@ function Bust({
     <group position={position}>
       <mesh position={[0, 0.4, 0]} castShadow>
         <boxGeometry args={[0.7, 0.8, 0.55]} />
-        <meshStandardMaterial map={tex.woodBust} color="#7A5230" roughness={0.6} />
+        <meshStandardMaterial map={tex.woodBust} color="#4A2E1A" roughness={0.7} />
       </mesh>
       <mesh position={[0, 0.85, 0]} castShadow>
         <boxGeometry args={[0.78, 0.08, 0.62]} />
-        <meshStandardMaterial color="#9A6840" roughness={0.55} metalness={0.2} />
+        <meshStandardMaterial color="#5A3A1F" roughness={0.6} metalness={0.2} />
       </mesh>
       <mesh position={[0, 0.95, 0]} castShadow>
         <cylinderGeometry args={[0.28, 0.32, 0.1, 16]} />
-        <meshStandardMaterial color="#E8D8B8" roughness={0.4} metalness={0.3} />
+        <meshStandardMaterial color="#D8C8A8" roughness={0.4} metalness={0.3} />
       </mesh>
       <mesh position={[0, 1.1, 0]} castShadow>
         <cylinderGeometry args={[0.18, 0.22, 0.2, 12]} />
-        <meshStandardMaterial color="#F0E2C5" roughness={0.4} metalness={0.2} />
+        <meshStandardMaterial color="#E8DCC0" roughness={0.4} metalness={0.2} />
       </mesh>
       <mesh position={[0, 1.35, -0.05]} castShadow>
         <boxGeometry args={[0.55, 0.4, 0.4]} />
-        <meshStandardMaterial color="#F0E2C5" roughness={0.45} metalness={0.2} />
+        <meshStandardMaterial color="#E8DCC0" roughness={0.45} metalness={0.2} />
       </mesh>
       <mesh position={[0, 1.65, 0]} castShadow>
-        <sphereGeometry args={[0.32, 20, 16]} />
-        <meshStandardMaterial color="#F0E2C5" roughness={0.4} metalness={0.2} />
+        <sphereGeometry args={[0.28, 20, 16]} />
+        <meshStandardMaterial color="#E8DCC0" roughness={0.4} metalness={0.2} />
       </mesh>
-      <mesh position={[0, 1.78, 0]} castShadow>
-        <sphereGeometry args={[0.31, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <meshStandardMaterial color="#A89070" roughness={0.6} metalness={0.1} />
+      <mesh position={[0, 1.75, 0]} castShadow>
+        <sphereGeometry args={[0.27, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <meshStandardMaterial color="#8A7A5A" roughness={0.6} metalness={0.1} />
       </mesh>
-      <mesh position={[0, 1.5, 0.26]} castShadow>
-        <sphereGeometry args={[0.18, 12, 8, 0, Math.PI * 2, Math.PI / 3, Math.PI * 0.6]} />
-        <meshStandardMaterial color="#A89070" roughness={0.6} metalness={0.1} />
+      <mesh position={[0, 1.5, 0.22]} castShadow>
+        <sphereGeometry args={[0.15, 12, 8, 0, Math.PI * 2, Math.PI / 3, Math.PI * 0.6]} />
+        <meshStandardMaterial color="#8A7A5A" roughness={0.6} metalness={0.1} />
       </mesh>
-      <mesh position={[0, 1.62, 0.3]} castShadow>
-        <coneGeometry args={[0.05, 0.1, 6]} />
-        <meshStandardMaterial color="#F0E2C5" roughness={0.4} metalness={0.2} />
+      <mesh position={[0, 1.62, 0.27]} castShadow>
+        <coneGeometry args={[0.04, 0.08, 6]} />
+        <meshStandardMaterial color="#E8DCC0" roughness={0.4} metalness={0.2} />
       </mesh>
-      <mesh position={[0, 1.74, 0.25]} castShadow>
-        <boxGeometry args={[0.2, 0.04, 0.07]} />
-        <meshStandardMaterial color="#C0A878" roughness={0.6} />
+      <mesh position={[0, 1.72, 0.22]} castShadow>
+        <boxGeometry args={[0.18, 0.03, 0.06]} />
+        <meshStandardMaterial color="#A89A7A" roughness={0.6} />
       </mesh>
     </group>
   );
@@ -1806,70 +1303,62 @@ function SceneInner({
 }) {
   return (
     <>
-      <fog attach="fog" args={["#F8F0E0", 28, 50]} />
-      <hemisphereLight args={["#FFF5D8", "#D8C8A8", 1.4]} />
-      <ambientLight intensity={1.1} color="#FFF5D8" />
+      <fog attach="fog" args={["#E8D5A8", 22, 40]} />
+      <hemisphereLight args={["#FFE5B0", "#5A3A1F", 0.8]} />
+      <ambientLight intensity={0.7} color="#FFE5B0" />
       <directionalLight
-        position={[-2, 12, 4]}
-        intensity={2.0}
-        color="#FFF5D8"
+        position={[-8, 5, 2]}
+        intensity={2.2}
+        color="#FFE5B0"
         castShadow
         shadow-mapSize={[2048, 2048]}
-        shadow-camera-left={-12}
-        shadow-camera-right={12}
-        shadow-camera-top={12}
-        shadow-camera-bottom={-12}
+        shadow-camera-left={-10}
+        shadow-camera-right={10}
+        shadow-camera-top={10}
+        shadow-camera-bottom={-10}
         shadow-bias={-0.0005}
       />
-      {/* Skylight spot from above */}
-      <spotLight
-        position={[0, 9, 1]}
-        target-position={[0, 0, 0]}
-        intensity={2.2}
-        angle={Math.PI / 4}
-        penumbra={0.6}
-        color="#FFF5D8"
-        distance={20}
-        decay={1.4}
-      />
-      {/* Warm front fill */}
       <pointLight
-        position={[0, 3, 6]}
+        position={[0, 6.5, 2]}
+        intensity={2.0}
+        color="#FFD78A"
+        distance={16}
+        decay={1.5}
+      />
+      <pointLight
+        position={[0, 3, 5]}
         intensity={1.0}
-        color="#FFE8C0"
-        distance={14}
+        color="#FFE5B0"
+        distance={12}
         decay={1.8}
       />
-      {/* Side rim lights for bookcase curve */}
-      <pointLight
-        position={[-6, 4, 0]}
-        intensity={0.8}
-        color="#FFE8C0"
-        distance={12}
-        decay={1.5}
-      />
-      <pointLight
-        position={[6, 4, 0]}
-        intensity={0.8}
-        color="#FFE8C0"
-        distance={12}
-        decay={1.5}
-      />
       <Room tex={tex} />
+      <Window tex={tex} />
+      <Bust position={[-6.5, 0, -4.5]} tex={tex} />
       <Bookcase
         topics={TOPICS}
         onBookClick={(topic, book) => onSelect({ topic, book })}
         tex={tex}
       />
+      <Armchair position={[-3, 0, 3.5]} tex={tex} />
+      <SideTable position={[-1.2, 0, 3.8]} tex={tex} />
+      <Plant position={[-5, 0, 3]} />
+      <Rug position={[-2, -0.55, 3.5]} tex={tex} />
+      <OpenBook position={[-1.2, 1.0, 3.8]} />
+      <CoffeeCup position={[-1.0, 0.6, 3.95]} />
+      <ReadingGlasses position={[-1.4, 0.6, 3.7]} />
+      <Portrait position={[9, 3, -3]} />
+      <WallClock position={[9, 1.0, -1.2]} />
+      <FloorLamp position={[5, 0, 0]} />
       <DustMotes />
       <ContactShadows
-        position={[0, -0.49, 0]}
-        opacity={0.25}
-        scale={28}
-        blur={3}
-        far={5}
+        position={[0, -0.55, 0]}
+        opacity={0.4}
+        scale={20}
+        blur={2.5}
+        far={4}
         resolution={1024}
-        color="#8B7048"
+        color="#3D2817"
       />
     </>
   );
@@ -1896,9 +1385,9 @@ export default function Scene({
       gl={{
         antialias: true,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.25,
+        toneMappingExposure: 1.0,
       }}
-      camera={{ position: [0, 3.5, 5.5], fov: 60, near: 0.1, far: 100 }}
+      camera={{ position: [0, 2.8, 15], fov: 50, near: 0.1, far: 100 }}
     >
       <color attach="background" args={["#E8D5A8"]} />
       <Suspense fallback={null}>
@@ -1911,12 +1400,12 @@ export default function Scene({
       <OrbitControls
         enablePan={false}
         minDistance={5}
-        maxDistance={14}
+        maxDistance={20}
         minPolarAngle={Math.PI / 4}
         maxPolarAngle={Math.PI / 2.0}
-        minAzimuthAngle={-Math.PI / 3}
-        maxAzimuthAngle={Math.PI / 3}
-        target={[0, 2.5, BC_CENTER_Z]}
+        minAzimuthAngle={-Math.PI / 4}
+        maxAzimuthAngle={Math.PI / 4}
+        target={[0, 2.5, 0]}
         enableDamping
         dampingFactor={0.08}
       />
