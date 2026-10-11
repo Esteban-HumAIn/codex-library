@@ -50,13 +50,13 @@ function hash(s: string) {
 }
 
 function bookWidth(book: Book) {
-  return 0.32 + ((hash(book.id) * 3) % 14) / 100;
+  return 0.32 + ((hash(book.id) * 3) % 22) / 100; // 0.32 - 0.54
 }
 function bookHeight(book: Book) {
-  return 1.8 + ((hash(book.id) * 5) % 50) / 100;
+  return 0.6 + ((hash(book.id) * 5) % 30) / 100; // 0.6 - 0.9
 }
 function bookTilt(book: Book) {
-  return (((hash(book.id) * 7) % 7) - 3) * 0.008;
+  return (((hash(book.id) * 7) % 7) - 3) * 0.006;
 }
 
 // ============================================================
@@ -544,6 +544,68 @@ function shelfTangent(theta: number) {
 }
 
 // ============================================================
+// BACKING PANEL — flat panel on the wall behind the books, with
+// procedural packed-books texture so the shelf looks filled
+// ============================================================
+function BackingPanel({
+  y,
+  radius,
+  thetaStart,
+  thetaLength,
+  tex,
+}: {
+  y: number;
+  radius: number;
+  thetaStart: number;
+  thetaLength: number;
+  tex: THREE.Texture;
+}) {
+  // Approximate the curved panel as N thin segments
+  const segments = 48;
+  const segs = useMemo(() => {
+    const arr: { x: number; z: number; rotY: number; w: number; h: number }[] = [];
+    for (let i = 0; i < segments; i++) {
+      const t0 = i / segments;
+      const t1 = (i + 1) / segments;
+      const a0 = thetaStart + thetaLength * t0;
+      const a1 = thetaStart + thetaLength * t1;
+      const aMid = (a0 + a1) / 2;
+      const x = Math.cos(aMid) * radius;
+      const z = BC_CENTER_Z + Math.sin(aMid) * radius;
+      const arcLen = Math.abs(a1 - a0) * radius;
+      arr.push({
+        x,
+        z,
+        rotY: -aMid + Math.PI / 2,
+        w: arcLen + 0.05,
+        h: 1.6, // backing panel height
+      });
+    }
+    return arr;
+  }, [radius, thetaStart, thetaLength, segments]);
+
+  return (
+    <group>
+      {segs.map((s, i) => (
+        <mesh
+          key={i}
+          position={[s.x, y, s.z]}
+          rotation={[0, s.rotY, 0]}
+        >
+          <planeGeometry args={[s.w, s.h]} />
+          <meshStandardMaterial
+            map={tex}
+            roughness={0.85}
+            metalness={0.0}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+// ============================================================
 // CURVED SHELF — composed of N box segments forming an arc
 // Each segment is a flat plank placed at a specific angle on the curve
 // ============================================================
@@ -582,7 +644,7 @@ function CurvedShelf({
       arr.push({
         x,
         z,
-        rotY: -aMid + Math.PI / 2, // tangent direction (shelf lies along curve)
+        rotY: -aMid + Math.PI / 2,
         width: arcLen + 0.02,
       });
     }
@@ -591,8 +653,58 @@ function CurvedShelf({
 
   const depth = outerRadius - innerRadius;
 
+  // Procedural "packed books" backing texture — rendered once per shelf
+  const packedBooksTex = useMemo(() => {
+    const W = 2048;
+    const H = 256;
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    const ctx = c.getContext("2d")!;
+    // Backdrop
+    ctx.fillStyle = "#2A1A08";
+    ctx.fillRect(0, 0, W, H);
+    // Sky/background
+    ctx.fillStyle = "#1A0E04";
+    ctx.fillRect(0, 0, W, H);
+    // Draw many book spines packed tight
+    const palette = [
+      "#8B2A1A", "#1E3A6E", "#1F5C2E", "#9A6F1A", "#5C2A8E",
+      "#0A5A6E", "#7A2A0E", "#8E1F4F", "#3A4A5A",
+      "#A04020", "#2A4F8A", "#2A7040", "#B8902A", "#7A3AAD",
+      "#1A6A7E", "#9A4020", "#A82A60", "#4A5A6A",
+    ];
+    let x = 0;
+    let seed = y * 1000; // unique per shelf
+    function rand() {
+      seed = (seed * 9301 + 49297) % 233280;
+      return seed / 233280;
+    }
+    while (x < W) {
+      const bookW = 8 + Math.floor(rand() * 18); // 8-26 px
+      const colorIdx = Math.floor(rand() * palette.length);
+      ctx.fillStyle = palette[colorIdx];
+      ctx.fillRect(x, 4, bookW, H - 8);
+      // Gold band occasionally
+      if (rand() > 0.6) {
+        ctx.fillStyle = "#DAA520";
+        ctx.fillRect(x, H * 0.3, bookW, 3);
+      }
+      // Subtle vertical line at top/bottom
+      ctx.fillStyle = "rgba(0,0,0,0.3)";
+      ctx.fillRect(x, 4, 1, H - 8);
+      x += bookW + 1;
+    }
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.wrapS = THREE.RepeatWrapping;
+    t.wrapT = THREE.ClampToEdgeWrapping;
+    return t;
+  }, [y]);
+
   return (
     <group>
+      {/* Shelf plank segments */}
       {segmentsData.map((seg, i) => (
         <mesh
           key={i}
@@ -610,6 +722,14 @@ function CurvedShelf({
           />
         </mesh>
       ))}
+      {/* Backing panel with packed-books texture (flat panel on the wall side) */}
+      <BackingPanel
+        y={y + 0.6}
+        radius={outerRadius + 0.005}
+        thetaStart={thetaStart}
+        thetaLength={thetaLength}
+        tex={packedBooksTex}
+      />
       {segmentsData.map((seg, i) => (
         <mesh
           key={`led-${i}`}
@@ -874,18 +994,17 @@ function Bookcase({
                 const topicBookWidth = topicArc / topicBooks.length;
                 topicBooks.forEach((sb, bIdx) => {
                   const a = startAngle + bIdx * topicBookWidth + topicBookWidth / 2;
-                  const rBook = BC_R - 0.05;
-                  // Position relative to cylinder center at BC_CENTER_Z
+                  // Place book at the front edge of the shelf (closer to camera)
+                  const rBook = BC_R - BC_SHELF_DEPTH * 0.3;
                   const x = Math.cos(a) * rBook;
                   const z = BC_CENTER_Z + Math.sin(a) * rBook;
-                  // rotY: book spine faces outward (toward camera at +Z)
-                  // For book at angle a, outward direction is (cos a, 0, sin a)
-                  // Need rotY so local +Z points in outward direction
                   const rotY = a;
+                  // Position book so its bottom sits on the shelf
+                  const bookH = bookHeight(sb.book);
                   bookPositions.push({
                     book: sb.book,
                     topic: sb.topic,
-                    pos: [x, y + BC_SHELF_THICK / 2 + 0.9, z],
+                    pos: [x, y + BC_SHELF_THICK / 2 + bookH / 2, z],
                     rotY,
                   });
                 });
