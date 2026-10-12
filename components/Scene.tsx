@@ -47,6 +47,95 @@ function getBookColor(book: Book, topic: Topic): string {
   return COLORS[topic.id] || "#5C3A1E";
 }
 
+// Darken a hex color by a factor (0-1)
+function darken(hex: string, amount: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const f = (v: number) => Math.max(0, Math.floor(v * (1 - amount)));
+  return `#${f(r).toString(16).padStart(2, "0")}${f(g).toString(16).padStart(2, "0")}${f(b).toString(16).padStart(2, "0")}`;
+}
+
+// Create a classic leather-bound book spine texture (CanvasTexture)
+// Used on the +z face of each book (the face the viewer sees)
+function createSpineTexture(book: Book, color: string): THREE.CanvasTexture {
+  const canvas = document.createElement("canvas");
+  canvas.width = 128;
+  canvas.height = 256;
+  const ctx = canvas.getContext("2d")!;
+
+  // Background: base color
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, 128, 256);
+
+  // Horizontal gradient for depth (darker on edges)
+  const grad = ctx.createLinearGradient(0, 0, 128, 0);
+  grad.addColorStop(0, "rgba(0,0,0,0.35)");
+  grad.addColorStop(0.5, "rgba(0,0,0,0)");
+  grad.addColorStop(1, "rgba(0,0,0,0.35)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 128, 256);
+
+  // Top and bottom darker bands (cap of the spine)
+  const cap = darken(color, 0.3);
+  ctx.fillStyle = cap;
+  ctx.fillRect(0, 0, 128, 14);
+  ctx.fillRect(0, 242, 128, 14);
+
+  // Gold horizontal raised bands (classic leather-bound)
+  const gold = "#C49B30";
+  const goldDark = "#8B6914";
+  ctx.fillStyle = gold;
+  ctx.fillRect(0, 36, 128, 2);
+  ctx.fillRect(0, 60, 128, 2);
+  ctx.fillRect(0, 196, 128, 2);
+  ctx.fillRect(0, 220, 128, 2);
+  // Shadow under bands
+  ctx.fillStyle = goldDark;
+  ctx.fillRect(0, 38, 128, 1);
+  ctx.fillRect(0, 62, 128, 1);
+  ctx.fillRect(0, 198, 128, 1);
+  ctx.fillRect(0, 222, 128, 1);
+
+  // Small decorative gold diamond at top and bottom (classic leather detail)
+  ctx.fillStyle = gold;
+  ctx.beginPath();
+  ctx.moveTo(64, 18);
+  ctx.lineTo(70, 24);
+  ctx.lineTo(64, 30);
+  ctx.lineTo(58, 24);
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(64, 226);
+  ctx.lineTo(70, 232);
+  ctx.lineTo(64, 238);
+  ctx.lineTo(58, 232);
+  ctx.closePath();
+  ctx.fill();
+
+  // Title text (vertical, gold serif)
+  ctx.save();
+  ctx.translate(64, 128);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillStyle = gold;
+  ctx.font = "bold 11px Georgia, 'Times New Roman', serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  // Truncate long titles
+  const title = book.title.length > 22 ? book.title.slice(0, 20) + "…" : book.title;
+  ctx.fillText(title, 0, -2);
+  // Author below title (smaller)
+  ctx.font = "italic 8px Georgia, 'Times New Roman', serif";
+  ctx.fillText(book.author.split(" ").slice(-1)[0] || "", 0, 14);
+  ctx.restore();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.anisotropy = 4;
+  texture.needsUpdate = true;
+  return texture;
+}
+
 // ============== COFFERED CEILING ==============
 function CofferedCeiling({ tex }: { tex: THREE.Texture }) {
   return (
@@ -551,6 +640,9 @@ function Book3D({
   const h = bookHeight(book);
   const d = 0.22;
   const color = getBookColor(book, topic);
+  const spineTexture = useMemo(() => createSpineTexture(book, color), [book, color]);
+  const coverColor = darken(color, 0.15);
+  const pageColor = darken(color, 0.45);
   const [hover, setHover] = useState(false);
 
   return (
@@ -569,23 +661,29 @@ function Book3D({
     >
       <mesh castShadow receiveShadow>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial
-          color={color}
-          roughness={0.85}
-          metalness={0.05}
-          emissive={hover ? color : "#000000"}
-          emissiveIntensity={hover ? 0.2 : 0}
-        />
+        {/* Face order: 0=+x, 1=-x, 2=+y, 3=-y, 4=+z (spine), 5=-z */}
+        {/* Spine (face 4) — viewer sees this */}
+        <meshStandardMaterial attach="material-4" map={spineTexture} roughness={0.85} metalness={0.05} />
+        {/* Side covers (faces 0,1) */}
+        <meshStandardMaterial attach="material-0" color={coverColor} roughness={0.9} metalness={0.03} />
+        <meshStandardMaterial attach="material-1" color={coverColor} roughness={0.9} metalness={0.03} />
+        {/* Top/bottom page edges (faces 2,3) — visible as paper */}
+        <meshStandardMaterial attach="material-2" color={pageColor} roughness={0.95} metalness={0} />
+        <meshStandardMaterial attach="material-3" color={pageColor} roughness={0.95} metalness={0} />
+        {/* Back cover (face 5) */}
+        <meshStandardMaterial attach="material-5" color={coverColor} roughness={0.9} metalness={0.03} />
       </mesh>
       {book.jades_pick && (
-        <mesh position={[-w / 2 - 0.005, 0, 0]}>
-          <planeGeometry args={[0.6, 0.5]} />
+        <mesh position={[0, 0, d / 2 + 0.005]}>
+          <planeGeometry args={[w * 0.5, h * 0.3]} />
           <meshStandardMaterial
             color="#C49B30"
             emissive="#C49B30"
             emissiveIntensity={0.6}
             metalness={0.8}
             roughness={0.3}
+            transparent
+            opacity={0.8}
           />
         </mesh>
       )}
