@@ -25,13 +25,49 @@ export default function Page() {
       </div>
 
       <div className="overlay">
-        <header className="plaque" aria-label="Identidad">
-          <div className="plaque__crest">C</div>
+        <header className="plaque plaque--glass" aria-label="Identidad">
+          <div className="plaque__crest">E</div>
           <div className="plaque__text">
-            <div className="plaque__name">Codex</div>
-            <div className="plaque__sub">Biblioteca · 9 secciones · 27 libros</div>
+            <div className="plaque__name">Librería personal de Esteban</div>
+            <div className="plaque__sub">9 secciones · 27 libros · 5 cosechás</div>
           </div>
         </header>
+
+        <aside className="controls-hint" aria-label="Cómo moverte en la librería">
+          <div className="controls-hint__title">Cómo moverte</div>
+          <div className="controls-hint__row">
+            <span className="controls-hint__icon" aria-hidden="true">⤴</span>
+            <span>Arrastrá para girar la librería</span>
+          </div>
+          <div className="controls-hint__row">
+            <span className="controls-hint__icon" aria-hidden="true">⊕</span>
+            <span>Scroll o pinch para hacer zoom</span>
+          </div>
+          <div className="controls-hint__row">
+            <span className="controls-hint__icon" aria-hidden="true">▸</span>
+            <span>Click en un libro para abrirlo</span>
+          </div>
+          <div className="controls-hint__row">
+            <span className="controls-hint__icon" aria-hidden="true">↓</span>
+            <span>Desde la ficha podés descargar el PDF</span>
+          </div>
+        </aside>
+
+        <aside className="coffee-cta" aria-label="Invitación a café">
+          <div className="coffee-cta__text">
+            ¿Leíste un libro de la lista?
+            <strong> Te invito un café.</strong>
+          </div>
+          <a
+            className="coffee-cta__btn"
+            href="https://buymeacoffee.com/esteban"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="coffee-cta__cup" aria-hidden="true">☕</span>
+            Invítame
+          </a>
+        </aside>
       </div>
 
       {selected && (
