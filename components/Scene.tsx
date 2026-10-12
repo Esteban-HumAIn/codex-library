@@ -839,8 +839,8 @@ function MarbleColumn({ position }: { position: [number, number, number] }) {
 }
 
 // ============== 2D BACKDROP ==============
-// Imagen 2D generada con IA (minimax-portal/image-01) del cuarto completo
-// Reemplaza el Room 3D para look más realista (Option A: hibrido 3D books + 2D room)
+// Imagen 2D generada con IA (minimax-portal/image-01) — pared limpia sin piso/muebles
+// para evitar conflictos visuales con el 3D (Option A: hibrido 3D books + 2D room)
 function Backdrop2D() {
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
 
@@ -855,9 +855,11 @@ function Backdrop2D() {
 
   if (!texture) return null;
 
+  // Plane 20×11.25 (16:9) posicionado para que el wainscoting (parte inferior de la imagen)
+  // quede al nivel del piso 3D, y la parte superior (con cornice) quede arriba del techo
   return (
-    <mesh position={[0, 3.75, -6.95]}>
-      <planeGeometry args={[40, 22.5]} />
+    <mesh position={[0, 5.6, -6.95]}>
+      <planeGeometry args={[20, 11.25]} />
       <meshBasicMaterial map={texture} toneMapped={false} />
     </mesh>
   );
@@ -1721,10 +1723,10 @@ function SceneInner({
           {/* 🖼️ 2D Backdrop (reemplaza Room 3D) */}
           <Backdrop2D />
 
-          {/* Floor simple (la imagen 2D no incluye floor) */}
+          {/* Floor simple con color que armoniza con el 2D backdrop (warm wood) */}
           <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
             <planeGeometry args={[40, 20]} />
-            <meshStandardMaterial color="#2A1A0E" roughness={0.7} metalness={0.1} />
+            <meshStandardMaterial color="#5C3A1E" roughness={0.5} metalness={0.05} />
           </mesh>
 
           {/* Columnas de mármol (4) */}
