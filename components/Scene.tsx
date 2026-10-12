@@ -593,11 +593,11 @@ function Book3D({
 }
 
 function bookWidth(book: Book): number {
-  return 0.18 + ((hash(book.id) * 5) % 6) / 100;
+  return 0.16 + ((hash(book.id) * 5) % 5) / 100;
 }
 
 function bookHeight(book: Book): number {
-  return 0.55 + ((hash(book.id) * 5) % 20) / 100;
+  return 0.35 + ((hash(book.id) * 5) % 15) / 100;
 }
 
 function hash(s: string): number {
