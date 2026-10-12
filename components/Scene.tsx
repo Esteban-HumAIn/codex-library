@@ -855,11 +855,11 @@ function Backdrop2D() {
 
   if (!texture) return null;
 
-  // Plane 30×16.875 (16:9 escalado) para cubrir todo el view horizontal
-  // El wainscoting de la imagen queda al nivel del piso 3D
+  // Plane 40×16.875 (16:9 escalado 33% horizontal) para cubrir el view
+  // en iPad/phone landscape sin revelar void
   return (
     <mesh position={[0, 5.6, -6.95]}>
-      <planeGeometry args={[30, 16.875]} />
+      <planeGeometry args={[40, 16.875]} />
       <meshBasicMaterial map={texture} toneMapped={false} />
     </mesh>
   );
@@ -1807,7 +1807,7 @@ export default function Scene({
       }}
       camera={{
         position: isMobile ? [0, 2.2, 17] : [0, 3.5, 16],
-        fov: isMobile ? 56 : 55,
+        fov: isMobile ? 50 : 55,
         near: 0.1,
         far: 100,
       }}
