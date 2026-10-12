@@ -57,7 +57,7 @@ export default function Page() {
         <aside className="coffee-cta" aria-label="Invitación a café">
           <div className="coffee-cta__text">
             ¿Leíste un libro de la lista?
-            <strong> Te invito un café.</strong>
+            <strong> Te invito un virtual coffee para conversar el libro conmigo.</strong>
           </div>
           <button
             type="button"

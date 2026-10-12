@@ -94,9 +94,9 @@ export function generateCoffeeCoupon(): void {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
   doc.setTextColor(COLORS.ink);
-  doc.text("Válido por un café contigo, donde vos elijas.", 75, 48);
-  doc.text("Si leíste un libro de la biblioteca y querés", 75, 54);
-  doc.text("conversarlo en persona, este es tu pase.", 75, 60);
+  doc.text("Válido por un virtual coffee para conversar", 75, 48);
+  doc.text("el libro conmigo. Te escribo, vos me decís", 75, 54);
+  doc.text("cuándo y dónde (Zoom, Meet, o lo que prefieras).", 75, 60);
 
   // === Footer block (datos del cupón) ===
   // Cuadros para serial + fechas
@@ -130,7 +130,7 @@ export function generateCoffeeCoupon(): void {
   doc.setFont("helvetica", "italic");
   doc.setFontSize(7);
   doc.setTextColor(COLORS.inkSoft);
-  doc.text("Canje: escribime por WhatsApp con el serial · @esteban_aguilar", 75, 92);
+  doc.text("Canje: escribime por WhatsApp con el serial · agendamos virtual coffee", 75, 92);
 
   // === Filigrana ===
   doc.setFont("times", "italic");

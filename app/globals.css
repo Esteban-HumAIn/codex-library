@@ -513,16 +513,31 @@ a {
   .plaque__name { font-size: 14px; }
 }
 
-/* === Librería personal · transparent glass plaque === */
+/* === Librería personal · dark glass plaque === */
 .plaque--glass {
-  background: rgba(254, 250, 224, 0.45);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border: 1px solid rgba(221, 161, 94, 0.35);
-  box-shadow: 0 8px 32px -10px rgba(60, 38, 12, 0.25);
+  background: rgba(20, 16, 10, 0.55);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(221, 161, 94, 0.5);
+  box-shadow: 0 8px 32px -10px rgba(0, 0, 0, 0.5);
+  color: var(--cream);
 }
 
-/* === Controls hint · bottom-left === */
+.plaque--glass .plaque__name {
+  color: var(--cream);
+}
+
+.plaque--glass .plaque__sub {
+  color: rgba(245, 237, 220, 0.7);
+}
+
+.plaque--glass .plaque__crest {
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-2) 100%);
+  color: #1a1208;
+  border-color: var(--gold-2);
+}
+
+/* === Controls hint · bottom-left · dark glass === */
 .controls-hint {
   position: absolute;
   bottom: 28px;
@@ -531,18 +546,19 @@ a {
   flex-direction: column;
   gap: 6px;
   padding: 14px 18px;
-  background: rgba(254, 250, 224, 0.42);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border: 1px solid rgba(221, 161, 94, 0.3);
+  background: rgba(20, 16, 10, 0.55);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(221, 161, 94, 0.4);
   border-radius: 4px;
   font-family: var(--font-mono, monospace);
   font-size: 11px;
-  color: var(--ink);
+  color: rgba(245, 237, 220, 0.88);
   letter-spacing: 0.02em;
   pointer-events: auto;
   max-width: 280px;
   line-height: 1.4;
+  box-shadow: 0 8px 28px -10px rgba(0, 0, 0, 0.5);
 }
 
 .controls-hint__title {
@@ -551,17 +567,17 @@ a {
   font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-2);
+  color: var(--gold);
   margin-bottom: 4px;
   padding-bottom: 6px;
-  border-bottom: 1px solid rgba(184, 134, 11, 0.25);
+  border-bottom: 1px solid rgba(184, 134, 11, 0.4);
 }
 
 .controls-hint__row {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--ink);
+  color: rgba(245, 237, 220, 0.88);
 }
 
 .controls-hint__icon {
@@ -570,14 +586,14 @@ a {
   width: 18px;
   height: 18px;
   background: linear-gradient(180deg, var(--gold) 0%, var(--gold-2) 100%);
-  color: var(--page);
+  color: #1a1208;
   border-radius: 3px;
   font-size: 11px;
   font-weight: 600;
   flex-shrink: 0;
 }
 
-/* === Coffee CTA · bottom-right === */
+/* === Coffee CTA · bottom-right · dark glass === */
 .coffee-cta {
   position: absolute;
   bottom: 28px;
@@ -586,25 +602,25 @@ a {
   align-items: center;
   gap: 14px;
   padding: 12px 14px 12px 18px;
-  background: rgba(254, 250, 224, 0.45);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border: 1px solid rgba(184, 134, 11, 0.35);
+  background: rgba(20, 16, 10, 0.55);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(221, 161, 94, 0.5);
   border-radius: 4px;
-  box-shadow: 0 8px 24px -12px rgba(60, 38, 12, 0.3);
+  box-shadow: 0 8px 28px -10px rgba(0, 0, 0, 0.5);
   pointer-events: auto;
-  max-width: 360px;
+  max-width: 380px;
 }
 
 .coffee-cta__text {
   font-family: var(--font-serif, serif);
   font-size: 13px;
-  color: var(--ink);
+  color: rgba(245, 237, 220, 0.92);
   line-height: 1.35;
 }
 
 .coffee-cta__text strong {
-  color: var(--ink);
+  color: var(--cream);
   font-weight: 600;
 }
 
