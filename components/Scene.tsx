@@ -1424,8 +1424,10 @@ function SceneInner({
 // ============================================================
 export default function Scene({
   onSelect,
+  isMobile = false,
 }: {
   onSelect: (s: { topic: Topic; book: Book } | null) => void;
+  isMobile?: boolean;
 }) {
   const [tex, setTex] = useState<TexCache | null>(null);
 
@@ -1442,7 +1444,12 @@ export default function Scene({
         toneMapping: THREE.ACESFilmicToneMapping,
         toneMappingExposure: 1.5,
       }}
-      camera={{ position: [0, 2.8, 15], fov: 50, near: 0.1, far: 100 }}
+      camera={{
+        position: isMobile ? [0, 3.2, 24] : [0, 2.8, 15],
+        fov: isMobile ? 62 : 50,
+        near: 0.1,
+        far: 100,
+      }}
     >
       <color attach="background" args={["#E8D5A8"]} />
       <Suspense fallback={null}>

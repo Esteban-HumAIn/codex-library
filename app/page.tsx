@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { TOPICS, type Book, type Topic } from "@/lib/data";
 import BookDetailModal from "@/components/BookDetailModal";
@@ -23,6 +23,14 @@ export default function Page() {
   const [selected, setSelected] = useState<{ topic: Topic; book: Book } | null>(null);
   const [filter, setFilter] = useState<string>("all");
   const [query, setQuery] = useState<string>("");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const visibleTopics = useMemo(() => {
     return TOPICS.filter((t) => {
@@ -36,7 +44,7 @@ export default function Page() {
   return (
     <>
       <div className="stage">
-        <Scene onSelect={setSelected} />
+        <Scene onSelect={setSelected} isMobile={isMobile} />
       </div>
 
       <div className="overlay">

@@ -436,7 +436,79 @@ a {
 .cursor-grabbing { cursor: grabbing; }
 .cursor-pointer { cursor: pointer; }
 
+/* iPhone / iOS safe-area vars */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+
 @media (max-width: 768px) {
+  /* Modal: single column on mobile */
   .modal { grid-template-columns: 1fr; }
   .modal__page { padding: 24px; max-height: 50vh; }
+
+  /* Plaque: smaller, top-left, account for notch */
+  .plaque {
+    top: calc(12px + var(--sat));
+    left: calc(12px + var(--sal));
+    padding: 6px 12px 6px 8px;
+    gap: 8px;
+  }
+  .plaque__crest {
+    width: 28px;
+    height: 28px;
+    font-size: 15px;
+  }
+  .plaque__name {
+    font-size: 16px;
+  }
+  .plaque__sub {
+    display: none;
+  }
+
+  /* Search: full-width below plaque */
+  .notebook {
+    top: calc(54px + var(--sat));
+    left: calc(12px + var(--sal));
+    right: calc(12px + var(--sar));
+    width: auto;
+    padding: 8px 12px;
+  }
+  .notebook input {
+    font-size: 13px;
+  }
+
+  /* Legend chips: smaller, wrap, sit ABOVE iOS bottom bar */
+  .legend {
+    bottom: calc(80px + var(--sab));
+    left: 8px;
+    right: 8px;
+    transform: none;
+    max-width: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 4px;
+  }
+  .legend__chip {
+    font-size: 11px;
+    padding: 3px 9px 3px 3px;
+    gap: 5px;
+  }
+  .legend__dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  /* Hint: hidden on mobile (less important on touch) */
+  .legend__hint {
+    display: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .legend__chip { font-size: 10px; padding: 3px 7px 3px 3px; }
+  .plaque__name { font-size: 14px; }
 }
