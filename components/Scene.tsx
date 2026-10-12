@@ -855,11 +855,11 @@ function Backdrop2D() {
 
   if (!texture) return null;
 
-  // Plane 40×16.875 (16:9 escalado 33% horizontal) para cubrir el view
-  // en iPad/phone landscape sin revelar void
+  // Plane 50×21.4 (21:9) ultra-wide para cubrir iPad/phone landscape
+  // Posición y=5.35 alinea el wainscoting de la imagen con el piso 3D (y=0)
   return (
-    <mesh position={[0, 5.6, -6.95]}>
-      <planeGeometry args={[40, 16.875]} />
+    <mesh position={[0, 5.35, -6.95]}>
+      <planeGeometry args={[50, 21.4]} />
       <meshBasicMaterial map={texture} toneMapped={false} />
     </mesh>
   );
