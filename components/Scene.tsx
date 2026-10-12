@@ -920,16 +920,16 @@ function SceneInner({
 
   return (
     <>
-      <fog attach="fog" args={["#1A0A05", 14, 32]} />
+      <fog attach="fog" args={["#2A1A0E", 22, 40]} />
 
-      {/* Ambient MUY bajo (candlelight) */}
-      <ambientLight intensity={0.15} color="#FFB070" />
+      {/* Ambient cálido (candlelight) */}
+      <ambientLight intensity={0.5} color="#FFD8A0" />
 
-      {/* Luz cálida cenital (simula luz que entra de vitrales) */}
+      {/* Luz cálida cenital (luz que entra de vitrales) */}
       <directionalLight
         position={[0, 12, 0]}
-        intensity={0.3}
-        color="#FFB070"
+        intensity={0.6}
+        color="#FFD8A0"
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-far={20}
@@ -1030,7 +1030,7 @@ export default function Scene({
       gl={{
         antialias: true,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.2,
+        toneMappingExposure: 2.0,
       }}
       camera={{
         position: isMobile ? [0, 3.2, 24] : [0, 3.5, 16],
@@ -1039,7 +1039,7 @@ export default function Scene({
         far: 100,
       }}
     >
-      <color attach="background" args={["#1A0A05"]} />
+      <color attach="background" args={["#2D1810"]} />
       <Suspense fallback={null}>
         {tex ? (
           <SceneInner onSelect={onSelect} />
