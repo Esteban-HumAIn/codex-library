@@ -12,6 +12,7 @@ export type Book = {
   key_concepts?: string[];
   synthesis?: string;
   reading_plan?: string;
+  cosecha_pdf?: string;
 };
 
 export type Topic = {
@@ -42,6 +43,7 @@ export const TOPICS: Topic[] = [
         "language": "EN",
         "rank": 1,
         "jades_pick": true,
+        "cosecha_pdf": "/assets/feynman_six_easy_pieces.pdf",
         "depth": "introductorio",
         "why_this_book": "Feynman explicando física con claridad brutal. Seis capítulos tomados de las Lectures que destilan lo esencial: átomos, conservación de energía, gravitación, mecánica cuántica, la relación entre física y otras ciencias. Si solo podés leer un libro de física, es este.",
         "key_concepts": [
@@ -63,6 +65,7 @@ export const TOPICS: Topic[] = [
         "language": "EN",
         "rank": 2,
         "jades_pick": false,
+        "cosecha_pdf": "/assets/greene_elegant_universe.pdf",
         "depth": "introductorio-intermedio",
         "why_this_book": "La mejor introducción a la teoría de cuerdas y la unificación de las cuatro fuerzas fundamentales. Greene escribe como un novelista — accesible, narrativo, sin perder rigor. Si Feynman es el ABC, Greene es el siguiente paso hacia la frontera.",
         "key_concepts": [
@@ -84,6 +87,7 @@ export const TOPICS: Topic[] = [
         "language": "EN",
         "rank": 3,
         "jades_pick": false,
+        "cosecha_pdf": "/assets/rovelli_seven_brief_lessons.pdf",
         "depth": "introductorio",
         "why_this_book": "Setenta páginas que resumen la física del siglo XX con la prosa más elegante que vas a leer. Rovelli es poeta. Si querés un libro que te haga enamorar de la física sin jerga, este es el que regalarías.",
         "key_concepts": [
@@ -115,6 +119,7 @@ export const TOPICS: Topic[] = [
         "language": "EN",
         "rank": 1,
         "jades_pick": true,
+        "cosecha_pdf": "/assets/hofstadter_geb.pdf",
         "depth": "intermedio",
         "why_this_book": "Un libro que usa tres sistemas formales (la música de Bach, los grabados de Escher, los teoremas de Gödel) para iluminar una sola idea: cómo la autorreferencia y los bucles extraños producen emergencia. Es libro de matemáticas, filosofía de la mente, música y arte al mismo tiempo. Único.",
         "key_concepts": [
@@ -136,6 +141,7 @@ export const TOPICS: Topic[] = [
         "language": "EN",
         "rank": 2,
         "jades_pick": false,
+        "cosecha_pdf": "/assets/polya_how_to_solve_it.pdf",
         "depth": "introductorio",
         "why_this_book": "Pólya fue un matemático húngaro que se preguntó: ¿cómo piensan los buenos resolutores de problemas? Este libro es la respuesta. Es un manual de heurística matemática, pero también de heurística de pensamiento en general. Aplicable a programar, negociar, diseñar.",
         "key_concepts": [
@@ -327,6 +333,7 @@ export const TOPICS: Topic[] = [
       {
         "id": "aurelius-meditations",
         "title": "Meditaciones",
+        "cosecha_pdf": "/assets/marco_aurelio_cansancio.pdf",
         "author": "Marco Aurelio",
         "year": 180,
         "isbn": "978-0812968255",
@@ -348,6 +355,7 @@ export const TOPICS: Topic[] = [
       {
         "id": "aurelius-meditations-book-ii",
         "title": "Meditaciones · Libro II",
+        "cosecha_pdf": "/assets/marco_aurelio_libro_ii.pdf",
         "author": "Marco Aurelio",
         "year": 170,
         "isbn": "978-0812968255",
