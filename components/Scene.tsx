@@ -153,8 +153,6 @@ const UNIVERSITIES: University[] = [
   { id: "mit", name: "Massachusetts Institute of Technology", shortName: "MIT", primaryColor: "#8A1538", secondaryColor: "#A2AAAD", symbol: "book", founded: 1861, city: "Cambridge, MA" },
   { id: "stanford", name: "Stanford University", shortName: "STANFORD", primaryColor: "#8C1515", secondaryColor: "#B83A3A", symbol: "tree", founded: 1885, city: "Stanford, CA" },
   { id: "oxford", name: "University of Oxford", shortName: "OXFORD", primaryColor: "#002147", secondaryColor: "#C5C9C4", symbol: "book", founded: 1096, city: "Oxford, UK" },
-  { id: "cambridge", name: "University of Cambridge", shortName: "CAMBRIDGE", primaryColor: "#003E74", secondaryColor: "#E8E8E8", symbol: "shield", founded: 1209, city: "Cambridge, UK" },
-  { id: "harvard", name: "Harvard University", shortName: "HARVARD", primaryColor: "#A51C30", secondaryColor: "#F1C40F", symbol: "book", founded: 1636, city: "Cambridge, MA" },
 ];
 
 type Genius = {
@@ -1540,12 +1538,12 @@ function SceneInner({
           {/* Reloj de pared */}
           <WallClock position={[-9, 4, -6.9]} tex={tex} />
 
-          {/* 🏛️ GALERÍA: 5 universidades (crests heráldicos) — fila superior */}
+          {/* 🏛️ GALERÍA: 3 universidades (crests heráldicos) — fila superior, lejos de ventanas (x=±3) */}
           {UNIVERSITIES.map((u, i) => (
             <UniversityCrest
               key={u.id}
               university={u}
-              position={[-8 + i * 4, 6.3, -6.9]}
+              position={[-6 + i * 6, 6.3, -6.9]}
             />
           ))}
 
