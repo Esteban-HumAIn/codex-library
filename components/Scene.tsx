@@ -6,8 +6,6 @@ import { OrbitControls, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import { TOPICS, SHELVES, type Book, type Topic } from "@/lib/data";
 import {
-  makeWoodTexture,
-  makeMarbleTexture,
   makeGoldTextTexture,
   makePaperTexture,
   makeFabricTexture,
@@ -854,7 +852,6 @@ function DustMotes() {
 type TexCache = {
   woodFloor: THREE.Texture;
   woodPanel: THREE.Texture;
-  marble: THREE.Texture;
   goldText: THREE.Texture;
   paper: THREE.Texture;
   fabric: THREE.Texture;
@@ -867,7 +864,6 @@ function buildTextureCache(): TexCache {
   return {
     woodFloor: makeHerringboneTexture(),
     woodPanel: makeOakPanelTexture(),
-    marble: makeMarbleTexture(),
     goldText: makeGoldTextTexture(),
     paper: makePaperTexture(),
     fabric: makeFabricTexture(),
