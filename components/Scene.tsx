@@ -430,7 +430,7 @@ function BookcaseShelf({
 }) {
   const shelfY = useMemo(() => {
     const idx = SHELVES.findIndex((s) => s.num === shelf.num);
-    return idx * 0.7;
+    return idx * 0.8;
   }, [shelf.num]);
 
   const shelfBooks = useMemo(() => {
@@ -597,7 +597,7 @@ function bookWidth(book: Book): number {
 }
 
 function bookHeight(book: Book): number {
-  return 0.28 + ((hash(book.id) * 5) % 10) / 100;
+  return 0.32 + ((hash(book.id) * 5) % 10) / 100;
 }
 
 function hash(s: string): number {
@@ -920,16 +920,16 @@ function SceneInner({
 
   return (
     <>
-      <fog attach="fog" args={["#2A1A0E", 22, 40]} />
+      <fog attach="fog" args={["#3A2820", 26, 45]} />
 
       {/* Ambient cálido (candlelight) */}
-      <ambientLight intensity={0.5} color="#FFD8A0" />
+      <ambientLight intensity={0.9} color="#FFE0B0" />
 
       {/* Luz cálida cenital (luz que entra de vitrales) */}
       <directionalLight
         position={[0, 12, 0]}
-        intensity={0.6}
-        color="#FFD8A0"
+        intensity={1.0}
+        color="#FFE0B0"
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-far={20}
@@ -1030,7 +1030,7 @@ export default function Scene({
       gl={{
         antialias: true,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 2.0,
+        toneMappingExposure: 2.6,
       }}
       camera={{
         position: isMobile ? [0, 3.2, 24] : [0, 3.5, 16],
@@ -1039,7 +1039,7 @@ export default function Scene({
         far: 100,
       }}
     >
-      <color attach="background" args={["#2D1810"]} />
+      <color attach="background" args={["#3D2818"]} />
       <Suspense fallback={null}>
         {tex ? (
           <SceneInner onSelect={onSelect} />
