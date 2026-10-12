@@ -920,16 +920,16 @@ function SceneInner({
 
   return (
     <>
-      <fog attach="fog" args={["#3A2820", 26, 45]} />
+      <fog attach="fog" args={["#4A3624", 30, 50]} />
 
       {/* Ambient cálido (candlelight) */}
-      <ambientLight intensity={0.9} color="#FFE0B0" />
+      <ambientLight intensity={1.2} color="#FFE5B5" />
 
       {/* Luz cálida cenital (luz que entra de vitrales) */}
       <directionalLight
         position={[0, 12, 0]}
-        intensity={1.0}
-        color="#FFE0B0"
+        intensity={1.3}
+        color="#FFE5B5"
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-far={20}
@@ -937,6 +937,15 @@ function SceneInner({
         shadow-camera-right={12}
         shadow-camera-top={10}
         shadow-camera-bottom={-10}
+      />
+
+      {/* Fill light frontal (ilumina los libros del librero) */}
+      <pointLight
+        position={[0, 1.5, 5]}
+        intensity={1.5}
+        color="#FFD8A0"
+        distance={10}
+        decay={1.5}
       />
 
       {tex && (
@@ -1033,8 +1042,8 @@ export default function Scene({
         toneMappingExposure: 2.6,
       }}
       camera={{
-        position: isMobile ? [0, 3.2, 24] : [0, 3.5, 16],
-        fov: isMobile ? 62 : 55,
+        position: isMobile ? [0, 2.2, 17] : [0, 3.5, 16],
+        fov: isMobile ? 56 : 55,
         near: 0.1,
         far: 100,
       }}
