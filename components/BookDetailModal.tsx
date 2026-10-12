@@ -25,6 +25,7 @@ export default function BookDetailModal({
 }) {
   const c = COLORS[topic.id] || "#B8860B";
   const isMarcoAurelio = book.id === "aurelius-meditations";
+  const isMarcoAurelioII = book.id === "aurelius-meditations-book-ii";
 
   return (
     <div
@@ -82,6 +83,17 @@ export default function BookDetailModal({
             <a
               className="modal__pdf-btn"
               href="/assets/marco_aurelio_cansancio.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Abrir cosechá completa (PDF)
+            </a>
+          )}
+
+          {isMarcoAurelioII && (
+            <a
+              className="modal__pdf-btn"
+              href="/assets/marco_aurelio_libro_ii.pdf"
               target="_blank"
               rel="noopener noreferrer"
             >

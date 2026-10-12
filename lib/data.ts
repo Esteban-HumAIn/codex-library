@@ -346,13 +346,37 @@ export const TOPICS: Topic[] = [
         "reading_plan": "1 libro por mes durante 1 año, o 1 meditación por día durante 12 meses. La traducción Hays (Modern Library 2003) es la más legible; García Gual (Alianza 2001) es la mejor en español."
       },
       {
+        "id": "aurelius-meditations-book-ii",
+        "title": "Meditaciones · Libro II",
+        "author": "Marco Aurelio",
+        "year": 170,
+        "isbn": "978-0812968255",
+        "language": "GR (ES tr.)",
+        "rank": 2,
+        "jades_pick": true,
+        "depth": "intermedio",
+        "why_this_book": "Segunda entrega de Marco Aurelio en la librería: lectura libro por libro, no por tema. El Libro II son 17 pasajes escritos en presente — donde Marco Aurelio deja los principios generales del Libro I y empieza a escribir cada mañana, para sí mismo, sobre cómo vivir hoy. La cosecha está organizada en 5 bloques: preparación matutina, mente teñida por sus juicios, muerte como despertar, unidad del cosmos y aceptación amorosa. Cosechá completa: `~/Desktop/proyectos/libros/marco_aurelio_libro_ii/`.",
+        "key_concepts": [
+          "daímōn (espíritu interior)",
+          "hēgemonikón (facultad rectora)",
+          "prohaíresis (elección moral)",
+          "katà phýsin (según la naturaleza)",
+          "heimarménē (destino)",
+          "preparación matutina",
+          "muerte como despertar",
+          "aceptación amorosa"
+        ],
+        "synthesis": "El Libro II es la bitácora íntima de alguien que ya entendió los principios (Libro I) y ahora los aplica al día. Arranca con la frase más citada de todo Marco Aurelio ('Comienza la mañana diciéndote…') y sigue con 17 variaciones sobre un solo tema: lo que controlás y lo que no, mirado en presente. Los 12 términos griegos en juego — daímōn, hēgemonikón, prohaíresis, katà phýsin, heimarménē, apátheia, hýlē, chrónos, thánatos, logikòn zôion, prós — son el vocabulario que el estoicismo romano absorbe del griego clásico y vuelve herramienta diaria. Releerlo toma 60–90 minutos; la primera vez ves ritual, la segunda vez ves epistemología, la tercera vez ves compasión.",
+        "reading_plan": "60–90 min en una sesión, o 2 mañanas reflexivas (8–12 pasajes por mañana). Para estudio del griego, leer con Hays (inglés, Modern Library 2003) al lado y la versión libre de JADES para sentir el flujo. Si preferís no salir del español, García Gual (Alianza 2001) es la opción."
+      },
+      {
         "id": "seneca-letters",
         "title": "Letters from a Stoic",
         "author": "Séneca",
         "year": 65,
         "isbn": "978-0140442106",
         "language": "LAT (EN/ES tr.)",
-        "rank": 2,
+        "rank": 3,
         "jades_pick": false,
         "depth": "introductorio",
         "why_this_book": "El otro gran estoico romano, pero con tono muy diferente a Marco Aurelio. Séneca escribe cartas a un amigo (Lucilio) con consejos prácticos sobre riqueza, vejez, muerte, amistad. Más cálido, más conversacional, más aplicable.",
@@ -373,7 +397,7 @@ export const TOPICS: Topic[] = [
         "year": -380,
         "isbn": "978-0140455113",
         "language": "GR (EN/ES tr.)",
-        "rank": 3,
+        "rank": 4,
         "jades_pick": false,
         "depth": "intermedio",
         "why_this_book": "El libro que fundó la filosofía política occidental. La alegoría de la caverna, la teoría de las formas, la pregunta sobre qué es la justicia — todo está acá. Difícil pero vale cada página.",
@@ -689,7 +713,7 @@ export const TOPICS: Topic[] = [
 ];
 
 export const SHELVES = [
-  { num: "I", label: "Mundo natural", ids: ["fisica", "matematicas", "biologia"] },
-  { num: "II", label: "Pensamiento humano", ids: ["economia", "filosofia", "computacion"] },
-  { num: "III", label: "Sistemas y memoria", ids: ["historia", "psicologia", "sistemas"] },
+  { num: "I", label: "Pensamiento humano", ids: ["economia", "filosofia", "computacion"] },
+  { num: "II", label: "Sistemas y memoria", ids: ["historia", "psicologia", "sistemas"] },
+  { num: "III", label: "Mundo natural", ids: ["fisica", "matematicas", "biologia"] },
 ];

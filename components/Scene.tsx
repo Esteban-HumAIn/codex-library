@@ -273,7 +273,7 @@ function BookcaseShelf({
 }) {
   const shelfY = useMemo(() => {
     const idx = SHELVES.findIndex((s) => s.num === shelf.num);
-    return 2.4 - idx * 2.1;
+    return 4.5 - idx * 2.0;
   }, [shelf.num]);
 
   const shelfBooks = useMemo(() => {
@@ -618,8 +618,27 @@ function Bookcase({
       <Vase position={[-3, H + 0.65, 0]} />
       <Globe position={[-1.2, H + 0.65, 0]} />
       <Hourglass position={[1.2, H + 0.65, 0]} />
-      <BookStack position={[2.8, H + 0.65, 0]} />
       <Telescope position={[3.8, H + 0.65, 0]} />
+
+      {/* BookStack movido al estante del medio (5 libros parados) */}
+      <group position={[-2.5, 2.58, 0.15]}>
+        {[
+          { color: "#6B3410" },
+          { color: "#1E3A5F" },
+          { color: "#5A1F1F" },
+          { color: "#4A6B2C" },
+          { color: "#B8860B" },
+        ].map((b, i) => (
+          <mesh
+            key={`bs-${i}`}
+            position={[i * 0.34, 0.45, 0]}
+            castShadow
+          >
+            <boxGeometry args={[0.3, 0.9, 0.22]} />
+            <meshStandardMaterial color={b.color} roughness={0.5} metalness={0.1} />
+          </mesh>
+        ))}
+      </group>
 
       {/* Shelves */}
       {SHELVES.map((shelf) => {
@@ -646,19 +665,19 @@ function Bookcase({
 function Room({ tex }: { tex: TexCache }) {
   return (
     <group>
-      <mesh position={[0, 3, -7]} receiveShadow>
-        <planeGeometry args={[24, 10]} />
+      <mesh position={[0, 3.25, -7]} receiveShadow>
+        <planeGeometry args={[24, 10.5]} />
         <meshStandardMaterial map={tex.wallTex} color="#D8C49A" roughness={0.95} />
       </mesh>
-      <mesh position={[-12, 3, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
-        <planeGeometry args={[14, 10]} />
+      <mesh position={[-12, 3.25, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
+        <planeGeometry args={[14, 10.5]} />
         <meshStandardMaterial map={tex.wallTex} color="#D8C49A" roughness={0.95} />
       </mesh>
-      <mesh position={[12, 3, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
-        <planeGeometry args={[14, 10]} />
+      <mesh position={[12, 3.25, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
+        <planeGeometry args={[14, 10.5]} />
         <meshStandardMaterial map={tex.wallTex} color="#D8C49A" roughness={0.95} />
       </mesh>
-      <mesh position={[0, 7, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
+      <mesh position={[0, 8.5, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[24, 14]} />
         <meshStandardMaterial color="#E8DCB8" roughness={0.95} />
       </mesh>
@@ -685,15 +704,15 @@ function Room({ tex }: { tex: TexCache }) {
         <meshStandardMaterial map={tex.woodMed} color="#8B6F47" roughness={0.7} />
       </mesh>
       {/* Crown molding (top) */}
-      <mesh position={[0, 6.8, -6.95]} receiveShadow>
+      <mesh position={[0, 8.3, -6.95]} receiveShadow>
         <boxGeometry args={[24, 0.4, 0.1]} />
         <meshStandardMaterial map={tex.woodTop} color="#A67C52" roughness={0.7} />
       </mesh>
-      <mesh position={[-11.95, 6.8, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
+      <mesh position={[-11.95, 8.3, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
         <boxGeometry args={[14, 0.4, 0.1]} />
         <meshStandardMaterial map={tex.woodTop} color="#A67C52" roughness={0.7} />
       </mesh>
-      <mesh position={[11.95, 6.8, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
+      <mesh position={[11.95, 8.3, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
         <boxGeometry args={[14, 0.4, 0.1]} />
         <meshStandardMaterial map={tex.woodTop} color="#A67C52" roughness={0.7} />
       </mesh>
