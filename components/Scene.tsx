@@ -13,6 +13,7 @@ import {
   makeBrassTexture,
   makeOakPanelTexture,
   makeHerringboneTexture,
+  makeWhiteMarbleTexture,
 } from "@/lib/textures";
 
 /* =========================================================
@@ -619,7 +620,7 @@ function CofferedCeiling({ tex }: { tex: THREE.Texture }) {
         return (
           <mesh key={`beam-z-${i}`} position={[0, 7.45, z]} castShadow>
             <boxGeometry args={[50, 0.4, 0.4]} />
-            <meshStandardMaterial color="#2A1A0E" roughness={0.6} />
+            <meshStandardMaterial color="#4A3520" roughness={0.6} />
           </mesh>
         );
       })}
@@ -628,7 +629,7 @@ function CofferedCeiling({ tex }: { tex: THREE.Texture }) {
         return (
           <mesh key={`beam-x-${i}`} position={[x, 7.45, 0]} castShadow>
             <boxGeometry args={[0.4, 0.4, 28]} />
-            <meshStandardMaterial color="#2A1A0E" roughness={0.6} />
+            <meshStandardMaterial color="#4A3520" roughness={0.6} />
           </mesh>
         );
       })}
@@ -911,20 +912,20 @@ function Room({ tex }: { tex: TexCache }) {
         />
       </mesh>
 
-      {/* Wainscoting (zócalo de madera oscuro en la base) */}
+      {/* Wainscoting (zócalo de madera en la base) */}
       <mesh position={[0, 0.5, -6.95]}>
         <boxGeometry args={[24, 1, 0.1]} />
-        <meshStandardMaterial color="#2A1A0E" roughness={0.5} />
+        <meshStandardMaterial color="#4A3520" roughness={0.5} />
       </mesh>
 
       {/* Cornice (moldura superior) */}
       <mesh position={[0, 7.0, -6.95]}>
         <boxGeometry args={[24, 0.25, 0.15]} />
-        <meshStandardMaterial color="#2A1A0E" roughness={0.5} />
+        <meshStandardMaterial color="#4A3520" roughness={0.5} />
       </mesh>
       <mesh position={[-11.9, 7.0, 0]} rotation={[0, Math.PI / 2, 0]}>
         <boxGeometry args={[16, 0.25, 0.15]} />
-        <meshStandardMaterial color="#2A1A0E" roughness={0.5} />
+        <meshStandardMaterial color="#4A3520" roughness={0.5} />
       </mesh>
       <mesh position={[11.9, 7.0, 0]} rotation={[0, -Math.PI / 2, 0]}>
         <boxGeometry args={[16, 0.25, 0.15]} />
@@ -1628,6 +1629,7 @@ type TexCache = {
   leather: THREE.Texture;
   brass: THREE.Texture;
   rug: THREE.Texture;
+  marbleFloor: THREE.Texture;
 };
 
 function buildTextureCache(): TexCache {
@@ -1640,6 +1642,7 @@ function buildTextureCache(): TexCache {
     leather: makeLeatherTexture("#5C0F1A", 7),
     brass: makeBrassTexture(),
     rug: makeFabricTexture("#722F37"),
+    marbleFloor: makeWhiteMarbleTexture(),
   };
 }
 
@@ -1723,10 +1726,10 @@ function SceneInner({
           {/* 🖼️ 2D Backdrop (reemplaza Room 3D) */}
           <Backdrop2D />
 
-          {/* Floor con textura herringbone wood (combina con 2D backdrop) */}
+          {/* Floor con textura white marble (combina con 2D backdrop "Elegant Bright Library") */}
           <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
             <planeGeometry args={[40, 20]} />
-            <meshStandardMaterial map={tex.woodFloor} roughness={0.55} metalness={0.08} />
+            <meshStandardMaterial map={tex.marbleFloor} color="#F5F2EA" roughness={0.25} metalness={0.15} />
           </mesh>
 
           {/* Librero de múltiples niveles con paneles de madera */}
