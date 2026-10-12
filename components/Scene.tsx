@@ -1723,17 +1723,11 @@ function SceneInner({
           {/* 🖼️ 2D Backdrop (reemplaza Room 3D) */}
           <Backdrop2D />
 
-          {/* Floor simple con color que armoniza con el 2D backdrop (warm wood) */}
+          {/* Floor con textura herringbone wood (combina con 2D backdrop) */}
           <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
             <planeGeometry args={[40, 20]} />
-            <meshStandardMaterial color="#5C3A1E" roughness={0.5} metalness={0.05} />
+            <meshStandardMaterial map={tex.woodFloor} roughness={0.55} metalness={0.08} />
           </mesh>
-
-          {/* Columnas de mármol (4) */}
-          <MarbleColumn position={[-8, 0, -4]} />
-          <MarbleColumn position={[8, 0, -4]} />
-          <MarbleColumn position={[-8, 0, 4]} />
-          <MarbleColumn position={[8, 0, 4]} />
 
           {/* Librero de múltiples niveles con paneles de madera */}
           <Bookcase topics={TOPICS} onBookClick={(t, b) => onSelect({ topic: t, book: b })} tex={tex} />
@@ -1832,7 +1826,7 @@ export default function Scene({
       <OrbitControls
         enablePan={false}
         minDistance={4}
-        maxDistance={22}
+        maxDistance={14}
         minPolarAngle={Math.PI / 4}
         maxPolarAngle={Math.PI / 2.0}
         minAzimuthAngle={-Math.PI / 4}
