@@ -1806,7 +1806,7 @@ export default function Scene({
         toneMappingExposure: 2.6,
       }}
       camera={{
-        position: isMobile ? [0, 2.2, 9.5] : [0, 3.0, 9],
+        position: isMobile ? [0, 2.2, 17] : [0, 3.5, 16],
         fov: isMobile ? 50 : 55,
         near: 0.1,
         far: 100,
@@ -1823,11 +1823,11 @@ export default function Scene({
       <OrbitControls
         enablePan={false}
         minDistance={4}
-        maxDistance={10}
+        maxDistance={14}
         minPolarAngle={Math.PI / 3.2}
         maxPolarAngle={Math.PI / 2.0}
-        minAzimuthAngle={0}
-        maxAzimuthAngle={0}
+        minAzimuthAngle={-Math.PI / 8}
+        maxAzimuthAngle={Math.PI / 8}
         target={[0, 2.5, 0]}
         enableDamping
         dampingFactor={0.08}
