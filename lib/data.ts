@@ -713,6 +713,5 @@ export const TOPICS: Topic[] = [
 ];
 
 export const SHELVES = [
-  { num: "I", label: "Pensamiento humano", ids: ["economia", "filosofia", "computacion", "fisica"] },
-  { num: "II", label: "Mundo y sistemas", ids: ["historia", "psicologia", "sistemas", "matematicas", "biologia"] },
+  { num: "I", label: "Codex", ids: ["economia", "filosofia", "computacion", "historia", "psicologia", "sistemas", "fisica", "matematicas", "biologia"] },
 ];
