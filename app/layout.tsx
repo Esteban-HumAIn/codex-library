@@ -29,8 +29,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Codex · Tu biblioteca",
-  description: "Librería física de los libros que hay que leer.",
+  title: "Librería personal de Esteban",
+  description: "Librería 3D interactiva de Esteban — arrastrá para girar, scroll para zoom, click en un libro para abrirlo y descargar su cosechá en PDF.",
   themeColor: "#E5D3A8",
 };
 
