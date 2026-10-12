@@ -838,6 +838,31 @@ function MarbleColumn({ position }: { position: [number, number, number] }) {
   );
 }
 
+// ============== 2D BACKDROP ==============
+// Imagen 2D generada con IA (minimax-portal/image-01) del cuarto completo
+// Reemplaza el Room 3D para look más realista (Option A: hibrido 3D books + 2D room)
+function Backdrop2D() {
+  const [texture, setTexture] = useState<THREE.Texture | null>(null);
+
+  useEffect(() => {
+    const loader = new THREE.TextureLoader();
+    loader.load("/textures/library-backdrop.jpg", (tex) => {
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = 8;
+      setTexture(tex);
+    });
+  }, []);
+
+  if (!texture) return null;
+
+  return (
+    <mesh position={[0, 3.75, -6.95]}>
+      <planeGeometry args={[40, 22.5]} />
+      <meshBasicMaterial map={texture} toneMapped={false} />
+    </mesh>
+  );
+}
+
 // ============== ROOM (dark oak paneling + wood floor) ==============
 function Room({ tex }: { tex: TexCache }) {
   return (
@@ -1693,7 +1718,14 @@ function SceneInner({
 
       {tex && (
         <>
-          <Room tex={tex} />
+          {/* 🖼️ 2D Backdrop (reemplaza Room 3D) */}
+          <Backdrop2D />
+
+          {/* Floor simple (la imagen 2D no incluye floor) */}
+          <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+            <planeGeometry args={[40, 20]} />
+            <meshStandardMaterial color="#2A1A0E" roughness={0.7} metalness={0.1} />
+          </mesh>
 
           {/* Columnas de mármol (4) */}
           <MarbleColumn position={[-8, 0, -4]} />
@@ -1729,21 +1761,7 @@ function SceneInner({
           {/* Globo terráqueo */}
           <Globe position={[6, 0, 5.5]} tex={tex} />
 
-          {/* Retrato al óleo removido — reemplazado por galería de genios */}
-
-          {/* Reloj de pared */}
-          <WallClock position={[-9, 4, -6.9]} tex={tex} />
-
-          {/* 🏛️ GALERÍA: 3 universidades (crests heráldicos) — fila superior, lejos de ventanas (x=±3) */}
-          {UNIVERSITIES.map((u, i) => (
-            <UniversityCrest
-              key={u.id}
-              university={u}
-              position={[-6 + i * 6, 6.3, -6.9]}
-            />
-          ))}
-
-          {/* Cuadros de genios removidos */}
+          {/* University crests y WallClock ahora están en la imagen 2D del backdrop */}
 
           {/* Detalles en la mesa */}
           <OpenBook position={[-1, 0.86, 2.5]} tex={tex} />
