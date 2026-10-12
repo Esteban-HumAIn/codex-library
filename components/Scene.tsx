@@ -604,9 +604,9 @@ function GeniusPortrait({ position, genius }: { position: [number, number, numbe
 function CofferedCeiling({ tex }: { tex: THREE.Texture }) {
   return (
     <group position={[0, 7.5, 0]}>
-      {/* Cielo raso base (techo plano) */}
+      {/* Cielo raso base (techo plano) — extendido para cubrir todo el view */}
       <mesh receiveShadow rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[28, 16]} />
+        <planeGeometry args={[50, 30]} />
         <meshStandardMaterial
           map={tex}
           color="#3A2818"
@@ -615,19 +615,19 @@ function CofferedCeiling({ tex }: { tex: THREE.Texture }) {
       </mesh>
       {/* Vigas transversales (coffered look) */}
       {Array.from({ length: 7 }).map((_, i) => {
-        const z = -7 + (i * 14) / 6;
+        const z = -14 + (i * 28) / 6;
         return (
           <mesh key={`beam-z-${i}`} position={[0, 7.45, z]} castShadow>
-            <boxGeometry args={[28, 0.4, 0.4]} />
+            <boxGeometry args={[50, 0.4, 0.4]} />
             <meshStandardMaterial color="#2A1A0E" roughness={0.6} />
           </mesh>
         );
       })}
       {Array.from({ length: 10 }).map((_, i) => {
-        const x = -12 + (i * 24) / 9;
+        const x = -22 + (i * 44) / 9;
         return (
           <mesh key={`beam-x-${i}`} position={[x, 7.45, 0]} castShadow>
-            <boxGeometry args={[0.4, 0.4, 14]} />
+            <boxGeometry args={[0.4, 0.4, 28]} />
             <meshStandardMaterial color="#2A1A0E" roughness={0.6} />
           </mesh>
         );
@@ -855,11 +855,11 @@ function Backdrop2D() {
 
   if (!texture) return null;
 
-  // Plane 20×11.25 (16:9) posicionado para que el wainscoting (parte inferior de la imagen)
-  // quede al nivel del piso 3D, y la parte superior (con cornice) quede arriba del techo
+  // Plane 30×16.875 (16:9 escalado) para cubrir todo el view horizontal
+  // El wainscoting de la imagen queda al nivel del piso 3D
   return (
     <mesh position={[0, 5.6, -6.95]}>
-      <planeGeometry args={[20, 11.25]} />
+      <planeGeometry args={[30, 16.875]} />
       <meshBasicMaterial map={texture} toneMapped={false} />
     </mesh>
   );
@@ -1754,10 +1754,7 @@ function SceneInner({
           {/* 🏛️ Estatua ecuestre de Marco Aurelio (réplica con primitivos) */}
           <MarcusAureliusStatue position={[7, 0, 1]} />
 
-          {/* Globo terráqueo */}
-          <Globe position={[6, 0, 5.5]} tex={tex} />
-
-          {/* University crests y WallClock ahora están en la imagen 2D del backdrop */}
+          {/* Globe removido (parecía planta arbusto) — los university crests y clock están en la imagen 2D del backdrop */}
 
           {/* Detalles en la mesa */}
           <OpenBook position={[-1, 0.86, 2.5]} tex={tex} />
@@ -1827,10 +1824,10 @@ export default function Scene({
         enablePan={false}
         minDistance={4}
         maxDistance={14}
-        minPolarAngle={Math.PI / 4}
+        minPolarAngle={Math.PI / 3.2}
         maxPolarAngle={Math.PI / 2.0}
-        minAzimuthAngle={-Math.PI / 4}
-        maxAzimuthAngle={Math.PI / 4}
+        minAzimuthAngle={-Math.PI / 8}
+        maxAzimuthAngle={Math.PI / 8}
         target={[0, 2.5, 0]}
         enableDamping
         dampingFactor={0.08}
