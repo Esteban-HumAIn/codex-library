@@ -430,7 +430,7 @@ function BookcaseShelf({
 }) {
   const shelfY = useMemo(() => {
     const idx = SHELVES.findIndex((s) => s.num === shelf.num);
-    return 0.3 - idx * 1.0;
+    return idx * 0.7;
   }, [shelf.num]);
 
   const shelfBooks = useMemo(() => {
@@ -597,7 +597,7 @@ function bookWidth(book: Book): number {
 }
 
 function bookHeight(book: Book): number {
-  return 0.35 + ((hash(book.id) * 5) % 15) / 100;
+  return 0.28 + ((hash(book.id) * 5) % 10) / 100;
 }
 
 function hash(s: string): number {
