@@ -102,12 +102,12 @@ function Chandelier({ position, scale = 1 }: { position: [number, number, number
         <meshStandardMaterial color="#B8860B" metalness={0.9} roughness={0.25} />
       </mesh>
       {/* Anillos decorativos */}
-      <mesh position={[0, 0.4, 0]} castShadow>
-        <torusGeometry args={[0.5, 0.04, 8, 32]} rotation={[Math.PI / 2, 0, 0]} />
+      <mesh position={[0, 0.4, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+        <torusGeometry args={[0.5, 0.04, 8, 32]} />
         <meshStandardMaterial color="#B8860B" metalness={0.9} roughness={0.25} />
       </mesh>
-      <mesh position={[0, -0.3, 0]} castShadow>
-        <torusGeometry args={[0.4, 0.04, 8, 32]} rotation={[Math.PI / 2, 0, 0]} />
+      <mesh position={[0, -0.3, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+        <torusGeometry args={[0.4, 0.04, 8, 32]} />
         <meshStandardMaterial color="#B8860B" metalness={0.9} roughness={0.25} />
       </mesh>
       {/* Brazos con velas */}
@@ -669,8 +669,8 @@ function WallClock({ position, tex }: { position: [number, number, number]; tex:
   return (
     <group position={position}>
       {/* Marco circular */}
-      <mesh castShadow>
-        <cylinderGeometry args={[0.5, 0.5, 0.1, 32]} rotation={[Math.PI / 2, 0, 0]} />
+      <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.5, 0.5, 0.1, 32]} />
         <meshStandardMaterial color="#3D2817" roughness={0.5} />
       </mesh>
       {/* Esfera del reloj */}
@@ -864,12 +864,12 @@ function buildTextureCache(): TexCache {
   return {
     woodFloor: makeHerringboneTexture(),
     woodPanel: makeOakPanelTexture(),
-    goldText: makeGoldTextTexture(),
+    goldText: makeGoldTextTexture("Codex"),
     paper: makePaperTexture(),
-    fabric: makeFabricTexture(),
-    leather: makeLeatherTexture(),
+    fabric: makeFabricTexture("#722F37"),
+    leather: makeLeatherTexture("#5C0F1A", 7),
     brass: makeBrassTexture(),
-    rug: makeFabricTexture(),
+    rug: makeFabricTexture("#722F37"),
   };
 }
 
