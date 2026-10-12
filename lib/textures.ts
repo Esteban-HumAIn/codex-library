@@ -570,6 +570,134 @@ export function makeWindowView() {
 }
 
 // ============================================================
+// HERRINGBONE WOOD FLOOR · parquet pattern (Oxford/Harvard libraries)
+// ============================================================
+export function makeHerringboneTexture() {
+  const W = 1024;
+  const H = 1024;
+  const c = document.createElement("canvas");
+  c.width = W;
+  c.height = H;
+  const ctx = c.getContext("2d")!;
+  ctx.fillStyle = "#3D2817";
+  ctx.fillRect(0, 0, W, H);
+
+  const plankW = 64;
+  const plankH = 16;
+  // Patrón herringbone
+  for (let row = 0; row < H / plankW; row++) {
+    for (let col = 0; col < W / plankH; col++) {
+      const x = col * plankH;
+      const y = row * plankW;
+      // Cada “L” son 2 planks a 90°
+      const offset = (row % 2) * (plankH * 2);
+      const p1x = x + offset;
+      const p1y = y;
+      const p2x = x;
+      const p2y = y + plankW;
+      // Color de la plank con variación
+      const shade = 0.85 + Math.random() * 0.3;
+      const r = Math.floor(92 * shade);
+      const g = Math.floor(58 * shade);
+      const b = Math.floor(30 * shade);
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      // Plank horizontal
+      ctx.save();
+      ctx.translate(p1x + plankH / 2, p1y + plankW / 2);
+      ctx.rotate(Math.PI / 4);
+      ctx.fillRect(-plankH / 2, -plankW / 2 - 1, plankH, plankW + 2);
+      ctx.restore();
+      // Plank vertical
+      ctx.save();
+      ctx.translate(p2x + plankH / 2, p2y + plankW / 2);
+      ctx.rotate(Math.PI / 4);
+      ctx.fillRect(-plankH / 2, -plankW / 2 - 1, plankH, plankW + 2);
+      ctx.restore();
+      // Línea oscura de separación
+      ctx.strokeStyle = "rgba(20, 10, 5, 0.6)";
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(p1x, p1y, plankH, plankW);
+      ctx.strokeRect(p2x, p2y, plankH, plankW);
+      // Veta sutil
+      ctx.strokeStyle = "rgba(60, 35, 18, 0.25)";
+      ctx.lineWidth = 0.4;
+      for (let v = 0; v < 3; v++) {
+        ctx.beginPath();
+        ctx.moveTo(p1x + Math.random() * plankH, p1y);
+        ctx.lineTo(p1x + Math.random() * plankH, p1y + plankW);
+        ctx.stroke();
+      }
+    }
+  }
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(2, 2);
+  return tex;
+}
+
+// ============================================================
+// OAK PANEL TEXTURE · vertical wood paneling (Oxford/Harvard walls)
+// ============================================================
+export function makeOakPanelTexture() {
+  const W = 512;
+  const H = 512;
+  const c = document.createElement("canvas");
+  c.width = W;
+  c.height = H;
+  const ctx = c.getContext("2d")!;
+  ctx.fillStyle = "#2A1A0E";
+  ctx.fillRect(0, 0, W, H);
+
+  const panelW = 80;
+  const numPanels = W / panelW;
+  for (let i = 0; i < numPanels; i++) {
+    const x = i * panelW;
+    // Color base con variación
+    const shade = 0.85 + Math.random() * 0.25;
+    const r = Math.floor(60 * shade);
+    const g = Math.floor(38 * shade);
+    const b = Math.floor(20 * shade);
+    ctx.fillStyle = `rgb(${r},${g},${b})`;
+    ctx.fillRect(x + 2, 0, panelW - 4, H);
+    // Vetas verticales
+    ctx.strokeStyle = "rgba(30, 18, 10, 0.4)";
+    ctx.lineWidth = 0.5;
+    for (let v = 0; v < 8; v++) {
+      ctx.beginPath();
+      const vx = x + 4 + Math.random() * (panelW - 8);
+      ctx.moveTo(vx, 0);
+      ctx.bezierCurveTo(
+        vx + (Math.random() - 0.5) * 6, H * 0.3,
+        vx + (Math.random() - 0.5) * 6, H * 0.7,
+        vx + (Math.random() - 0.5) * 4, H
+      );
+      ctx.stroke();
+    }
+    // Borde del panel (línea oscura vertical)
+    ctx.strokeStyle = "rgba(15, 8, 3, 0.7)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, H);
+    ctx.stroke();
+  }
+  // Moldura horizontal superior (cornice)
+  ctx.fillStyle = "#1A0A05";
+  ctx.fillRect(0, 0, W, 8);
+  // Zócalo inferior
+  ctx.fillRect(0, H - 24, W, 24);
+  ctx.fillStyle = "#0A0500";
+  ctx.fillRect(0, H - 8, W, 8);
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  return tex;
+}
+
+// ============================================================
 // HELPERS
 // ============================================================
 function hexToRgb(hex: string) {
