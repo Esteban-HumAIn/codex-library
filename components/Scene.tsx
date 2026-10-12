@@ -174,20 +174,8 @@ function CofferedCeiling({ tex }: { tex: THREE.Texture }) {
 
 // ============== BRASS CHANDELIER ==============
 function Chandelier({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) {
-  const flameRefs = useRef<(THREE.Mesh | null)[]>([]);
-
   // 6 brazos con velas (candles)
   const arms = 6;
-
-  useFrame((state) => {
-    const t = state.clock.elapsedTime;
-    flameRefs.current.forEach((mesh, i) => {
-      if (mesh) {
-        const s = 1 + Math.sin(t * 3 + i) * 0.2;
-        mesh.scale.set(s, s, s);
-      }
-    });
-  });
   return (
     <group position={position} scale={scale}>
       {/* Cadena de suspensión */}
@@ -231,17 +219,7 @@ function Chandelier({ position, scale = 1 }: { position: [number, number, number
               <cylinderGeometry args={[0.035, 0.035, 0.18, 8]} />
               <meshStandardMaterial color="#F5E6D3" roughness={0.8} />
             </mesh>
-            {/* Llama (flame) */}
-            <mesh position={[x, 0.32, z]} ref={(el) => { flameRefs.current[i] = el; }}>
-              <sphereGeometry args={[0.025, 8, 8]} />
-              <meshStandardMaterial
-                color="#FFAA33"
-                emissive="#FFB050"
-                emissiveIntensity={3}
-                toneMapped={false}
-              />
-            </mesh>
-            {/* Luz puntual cálida */}
+            {/* Luz puntual cálida (vela apagada, luz decorativa) */}
             <pointLight
               position={[x, 0.4, z]}
               intensity={3}
@@ -1086,8 +1064,7 @@ function SceneInner({
           {/* Alfombra bajo la mesa */}
           <Rug position={[0, 0.005, 2.5]} tex={tex} />
 
-          {/* Busto clásico */}
-          <Bust position={[-6, 0, 5.5]} tex={tex} />
+          {/* Busto removido */}
 
           {/* Globo terráqueo */}
           <Globe position={[6, 0, 5.5]} tex={tex} />
@@ -1104,9 +1081,7 @@ function SceneInner({
           <ReadingGlasses position={[-0.5, 0.88, 2.5]} tex={tex} />
           <CoffeeCup position={[0.5, 0.88, 2.5]} tex={tex} />
 
-          {/* Plantas decorativas */}
-          <Plant position={[-7, 0, 5.5]} tex={tex} />
-          <Plant position={[7, 0, 5.5]} tex={tex} />
+          {/* Plantas removidas */}
 
           {/* Polvo dorado en el aire */}
           {/* DustMotes removido — partículas flotantes que calentaban el dispositivo */}
