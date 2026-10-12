@@ -1547,23 +1547,7 @@ function SceneInner({
             />
           ))}
 
-          {/* 🧠 GALERÍA: 5 genios — fila media */}
-          {GENIUSES.slice(0, 5).map((g, i) => (
-            <GeniusPortrait
-              key={g.id}
-              genius={g}
-              position={[-8 + i * 4, 3.2, -6.9]}
-            />
-          ))}
-
-          {/* 🧠 GALERÍA: 5 genios — fila inferior */}
-          {GENIUSES.slice(5, 10).map((g, i) => (
-            <GeniusPortrait
-              key={g.id}
-              genius={g}
-              position={[-8 + i * 4, 0.9, -6.9]}
-            />
-          ))}
+          {/* Cuadros de genios removidos */}
 
           {/* Detalles en la mesa */}
           <OpenBook position={[-1, 0.86, 2.5]} tex={tex} />
