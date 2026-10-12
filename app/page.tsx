@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { type Book, type Topic } from "@/lib/data";
 import BookDetailModal from "@/components/BookDetailModal";
+import { generateCoffeeCoupon } from "@/components/CoffeeCoupon";
 
 const Scene = dynamic(() => import("@/components/Scene"), { ssr: false });
 
@@ -58,15 +59,15 @@ export default function Page() {
             ¿Leíste un libro de la lista?
             <strong> Te invito un café.</strong>
           </div>
-          <a
+          <button
+            type="button"
             className="coffee-cta__btn"
-            href="https://buymeacoffee.com/esteban"
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={generateCoffeeCoupon}
+            aria-label="Generar cupón descargable por un café con Esteban"
           >
             <span className="coffee-cta__cup" aria-hidden="true">☕</span>
-            Invítame
-          </a>
+            Generar cupón
+          </button>
         </aside>
       </div>
 

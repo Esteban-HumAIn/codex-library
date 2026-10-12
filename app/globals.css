@@ -624,6 +624,7 @@ a {
   border: 1px solid var(--gold-2);
   border-radius: 3px;
   white-space: nowrap;
+  cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
