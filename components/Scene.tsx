@@ -136,6 +136,472 @@ function createSpineTexture(book: Book, color: string): THREE.CanvasTexture {
   return texture;
 }
 
+// ============== UNIVERSITY CRESTS & GENIUS PORTRAITS ==============
+
+type University = {
+  id: string;
+  name: string;
+  shortName: string;
+  primaryColor: string;
+  secondaryColor: string;
+  symbol: "book" | "lamp" | "tree" | "cross" | "shield" | "beaver";
+  founded: number;
+  city: string;
+};
+
+const UNIVERSITIES: University[] = [
+  { id: "mit", name: "Massachusetts Institute of Technology", shortName: "MIT", primaryColor: "#8A1538", secondaryColor: "#A2AAAD", symbol: "book", founded: 1861, city: "Cambridge, MA" },
+  { id: "stanford", name: "Stanford University", shortName: "STANFORD", primaryColor: "#8C1515", secondaryColor: "#B83A3A", symbol: "tree", founded: 1885, city: "Stanford, CA" },
+  { id: "oxford", name: "University of Oxford", shortName: "OXFORD", primaryColor: "#002147", secondaryColor: "#C5C9C4", symbol: "book", founded: 1096, city: "Oxford, UK" },
+  { id: "cambridge", name: "University of Cambridge", shortName: "CAMBRIDGE", primaryColor: "#003E74", secondaryColor: "#E8E8E8", symbol: "shield", founded: 1209, city: "Cambridge, UK" },
+  { id: "harvard", name: "Harvard University", shortName: "HARVARD", primaryColor: "#A51C30", secondaryColor: "#F1C40F", symbol: "book", founded: 1636, city: "Cambridge, MA" },
+];
+
+type Genius = {
+  id: string;
+  name: string;
+  years: string;
+  field: string;
+  symbol: "atom" | "apple" | "telescope" | "circle" | "radiation" | "tree" | "owl" | "lightning" | "tape" | "rocket";
+  hair: "wild" | "wig" | "bald" | "bun" | "short" | "long" | "curly";
+  beard: "none" | "goatee" | "full" | "mustache" | "long";
+};
+
+const GENIUSES: Genius[] = [
+  { id: "einstein", name: "Albert Einstein", years: "1879–1955", field: "Física", symbol: "atom", hair: "wild", beard: "mustache" },
+  { id: "galilei", name: "Galileo Galilei", years: "1564–1642", field: "Astronomía", symbol: "telescope", hair: "long", beard: "long" },
+  { id: "musk", name: "Elon Musk", years: "1971–", field: "Ingeniería", symbol: "rocket", hair: "short", beard: "none" },
+  { id: "newton", name: "Isaac Newton", years: "1643–1727", field: "Física & Math", symbol: "apple", hair: "wig", beard: "none" },
+  { id: "davinci", name: "Leonardo da Vinci", years: "1452–1519", field: "Polímata", symbol: "circle", hair: "long", beard: "long" },
+  { id: "curie", name: "Marie Curie", years: "1867–1934", field: "Química", symbol: "radiation", hair: "bun", beard: "none" },
+  { id: "darwin", name: "Charles Darwin", years: "1809–1882", field: "Biología", symbol: "tree", hair: "curly", beard: "full" },
+  { id: "aristotle", name: "Aristóteles", years: "384–322 BC", field: "Filosofía", symbol: "owl", hair: "curly", beard: "full" },
+  { id: "tesla", name: "Nikola Tesla", years: "1856–1943", field: "Ingeniería", symbol: "lightning", hair: "short", beard: "mustache" },
+  { id: "turing", name: "Alan Turing", years: "1912–1954", field: "Computación", symbol: "tape", hair: "short", beard: "none" },
+];
+
+function createUniversityCrestTexture(u: University): THREE.CanvasTexture {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext("2d")!;
+
+  // Parchment background
+  ctx.fillStyle = "#F5E6D3";
+  ctx.fillRect(0, 0, 256, 256);
+
+  // Heraldic shield shape (pointed bottom, rounded top)
+  ctx.beginPath();
+  ctx.moveTo(48, 60);
+  ctx.lineTo(208, 60);
+  ctx.lineTo(208, 140);
+  ctx.quadraticCurveTo(208, 200, 128, 230);
+  ctx.quadraticCurveTo(48, 200, 48, 140);
+  ctx.closePath();
+  ctx.fillStyle = u.primaryColor;
+  ctx.fill();
+  ctx.strokeStyle = "#B8860B";
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  // Inner border
+  ctx.beginPath();
+  ctx.moveTo(58, 70);
+  ctx.lineTo(198, 70);
+  ctx.lineTo(198, 138);
+  ctx.quadraticCurveTo(198, 192, 128, 220);
+  ctx.quadraticCurveTo(58, 192, 58, 138);
+  ctx.closePath();
+  ctx.strokeStyle = u.secondaryColor;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Symbol
+  ctx.save();
+  ctx.translate(128, 120);
+  ctx.fillStyle = u.secondaryColor;
+  ctx.strokeStyle = u.secondaryColor;
+  ctx.lineWidth = 2;
+
+  if (u.symbol === "book") {
+    // Open book
+    ctx.beginPath();
+    ctx.moveTo(-25, -10);
+    ctx.quadraticCurveTo(0, -15, 25, -10);
+    ctx.lineTo(25, 10);
+    ctx.quadraticCurveTo(0, 5, -25, 10);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, -13);
+    ctx.lineTo(0, 7);
+    ctx.stroke();
+  } else if (u.symbol === "tree") {
+    // Simple tree
+    ctx.beginPath();
+    ctx.arc(0, -5, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = u.primaryColor;
+    ctx.fillRect(-2, 10, 4, 15);
+  } else if (u.symbol === "shield") {
+    // Inner shield
+    ctx.beginPath();
+    ctx.moveTo(-15, -15);
+    ctx.lineTo(15, -15);
+    ctx.lineTo(15, 5);
+    ctx.quadraticCurveTo(15, 18, 0, 25);
+    ctx.quadraticCurveTo(-15, 18, -15, 5);
+    ctx.closePath();
+    ctx.stroke();
+    // Cross
+    ctx.beginPath();
+    ctx.moveTo(0, -10);
+    ctx.lineTo(0, 15);
+    ctx.moveTo(-8, 0);
+    ctx.lineTo(8, 0);
+    ctx.stroke();
+  } else if (u.symbol === "lamp") {
+    // Lamp
+    ctx.beginPath();
+    ctx.arc(0, -5, 12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = u.primaryColor;
+    ctx.fillRect(-1, 5, 2, 12);
+  } else if (u.symbol === "beaver") {
+    // Stylized beaver (simplified)
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 20, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(-15, -3, 6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  // Banner at bottom
+  ctx.fillStyle = u.secondaryColor;
+  ctx.fillRect(38, 195, 180, 22);
+  ctx.strokeStyle = u.primaryColor;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(38, 195, 180, 22);
+
+  // University name
+  ctx.fillStyle = u.primaryColor;
+  ctx.font = "bold 13px Georgia, 'Times New Roman', serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(u.shortName, 128, 206);
+
+  // Founded year at top
+  ctx.font = "italic 10px Georgia, 'Times New Roman', serif";
+  ctx.fillStyle = u.primaryColor;
+  ctx.fillText(`Est. ${u.founded}`, 128, 45);
+
+  // City below name
+  ctx.font = "9px Georgia, 'Times New Roman', serif";
+  ctx.fillStyle = "#3A2818";
+  ctx.fillText(u.city, 128, 238);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.anisotropy = 4;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function createGeniusPortraitTexture(g: Genius): THREE.CanvasTexture {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 320;
+  const ctx = canvas.getContext("2d")!;
+
+  // Sepia background
+  ctx.fillStyle = "#E8D5B7";
+  ctx.fillRect(0, 0, 256, 320);
+
+  // Vignette
+  const grad = ctx.createRadialGradient(128, 110, 30, 128, 110, 140);
+  grad.addColorStop(0, "rgba(0,0,0,0)");
+  grad.addColorStop(1, "rgba(60,30,10,0.3)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 256, 320);
+
+  // Cameo frame (oval)
+  ctx.beginPath();
+  ctx.ellipse(128, 110, 70, 85, 0, 0, Math.PI * 2);
+  ctx.fillStyle = "#F5E6D3";
+  ctx.fill();
+  ctx.strokeStyle = "#B8860B";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // Profile silhouette (facing right)
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(128, 110, 70, 85, 0, 0, Math.PI * 2);
+  ctx.clip();
+
+  ctx.fillStyle = "#1A0A05";
+  ctx.beginPath();
+  // Head shape (oval, slightly turned right)
+  ctx.moveTo(90, 80);
+  ctx.quadraticCurveTo(85, 50, 115, 35);
+  ctx.quadraticCurveTo(140, 30, 155, 45);
+  // Nose bump
+  ctx.quadraticCurveTo(165, 65, 158, 80);
+  // Mouth
+  ctx.quadraticCurveTo(152, 90, 155, 100);
+  // Chin
+  ctx.quadraticCurveTo(150, 120, 140, 130);
+  // Neck
+  ctx.quadraticCurveTo(135, 140, 130, 160);
+  ctx.lineTo(100, 160);
+  ctx.quadraticCurveTo(95, 140, 88, 120);
+  ctx.closePath();
+  ctx.fill();
+
+  // Hair style variations
+  ctx.fillStyle = "#0A0500";
+  if (g.hair === "wild") {
+    // Einstein wild hair
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 1.5 - Math.PI * 0.2;
+      const x = 115 + Math.cos(a) * 38;
+      const y = 55 + Math.sin(a) * 35;
+      ctx.beginPath();
+      ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else if (g.hair === "wig") {
+    // Newton-style wig
+    ctx.beginPath();
+    ctx.ellipse(125, 50, 45, 25, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(80, 45, 12, 50);
+    ctx.fillRect(158, 45, 12, 50);
+  } else if (g.hair === "long") {
+    // Da Vinci / Galileo long hair
+    ctx.beginPath();
+    ctx.ellipse(125, 50, 40, 30, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(85, 50, 15, 80);
+    ctx.fillRect(150, 50, 15, 80);
+  } else if (g.hair === "bun") {
+    // Marie Curie bun
+    ctx.beginPath();
+    ctx.arc(115, 40, 12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(125, 55, 35, 22, 0, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (g.hair === "curly") {
+    // Darwin / Aristotle curly
+    for (let i = 0; i < 10; i++) {
+      const x = 90 + (i % 4) * 20;
+      const y = 35 + Math.floor(i / 4) * 12;
+      ctx.beginPath();
+      ctx.arc(x, y, 7, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else if (g.hair === "short") {
+    // Musk / Tesla / Turing short hair
+    ctx.beginPath();
+    ctx.ellipse(125, 50, 32, 18, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Beard variations
+  if (g.beard === "full") {
+    ctx.beginPath();
+    ctx.ellipse(140, 115, 18, 22, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (g.beard === "long") {
+    ctx.beginPath();
+    ctx.ellipse(140, 120, 16, 30, 0.1, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (g.beard === "mustache") {
+    ctx.beginPath();
+    ctx.ellipse(152, 88, 10, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (g.beard === "goatee") {
+    ctx.beginPath();
+    ctx.ellipse(142, 115, 8, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+
+  // Name
+  ctx.fillStyle = "#1A0A05";
+  ctx.font = "bold 16px Georgia, 'Times New Roman', serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(g.name.toUpperCase(), 128, 225);
+
+  // Years
+  ctx.font = "italic 12px Georgia, 'Times New Roman', serif";
+  ctx.fillText(g.years, 128, 248);
+
+  // Field
+  ctx.font = "10px Georgia, 'Times New Roman', serif";
+  ctx.fillStyle = "#3A2818";
+  ctx.fillText(g.field, 128, 265);
+
+  // Field symbol
+  ctx.save();
+  ctx.translate(128, 290);
+  ctx.strokeStyle = "#3A2818";
+  ctx.fillStyle = "#3A2818";
+  ctx.lineWidth = 1.5;
+
+  if (g.symbol === "atom") {
+    for (let i = 0; i < 3; i++) {
+      ctx.save();
+      ctx.rotate((i * Math.PI) / 3);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 14, 6, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.beginPath();
+    ctx.arc(0, 0, 2, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (g.symbol === "apple") {
+    ctx.beginPath();
+    ctx.arc(-3, 2, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#1A0A05";
+    ctx.fillRect(-1, -8, 2, 6);
+  } else if (g.symbol === "telescope") {
+    ctx.save();
+    ctx.rotate(-Math.PI / 4);
+    ctx.fillRect(-12, -2, 24, 4);
+    ctx.fillRect(10, -4, 6, 8);
+    ctx.restore();
+  } else if (g.symbol === "circle") {
+    // Vitruvian circle
+    ctx.beginPath();
+    ctx.arc(0, 0, 14, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-14, 0);
+    ctx.lineTo(14, 0);
+    ctx.moveTo(0, -14);
+    ctx.lineTo(0, 14);
+    ctx.stroke();
+  } else if (g.symbol === "radiation") {
+    // Trefoil
+    for (let i = 0; i < 3; i++) {
+      ctx.save();
+      ctx.rotate((i * 2 * Math.PI) / 3);
+      ctx.beginPath();
+      ctx.arc(0, -7, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.beginPath();
+    ctx.arc(0, 0, 2, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (g.symbol === "tree") {
+    ctx.beginPath();
+    ctx.arc(0, -4, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(-1, 4, 2, 10);
+  } else if (g.symbol === "owl") {
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 10, 14, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#E8D5B7";
+    ctx.beginPath();
+    ctx.arc(-4, -3, 3, 0, Math.PI * 2);
+    ctx.arc(4, -3, 3, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (g.symbol === "lightning") {
+    ctx.beginPath();
+    ctx.moveTo(2, -14);
+    ctx.lineTo(-4, 0);
+    ctx.lineTo(1, 0);
+    ctx.lineTo(-3, 14);
+    ctx.lineTo(4, -2);
+    ctx.lineTo(-1, -2);
+    ctx.closePath();
+    ctx.fill();
+  } else if (g.symbol === "tape") {
+    // Turing tape (two parallel lines with marks)
+    ctx.beginPath();
+    ctx.moveTo(-14, -6);
+    ctx.lineTo(14, -6);
+    ctx.moveTo(-14, 6);
+    ctx.lineTo(14, 6);
+    ctx.stroke();
+    for (let i = 0; i < 5; i++) {
+      const x = -12 + i * 6;
+      ctx.beginPath();
+      ctx.moveTo(x, -6);
+      ctx.lineTo(x, 6);
+      ctx.stroke();
+    }
+  } else if (g.symbol === "rocket") {
+    // Simple rocket
+    ctx.beginPath();
+    ctx.moveTo(0, -12);
+    ctx.lineTo(4, 0);
+    ctx.lineTo(4, 10);
+    ctx.lineTo(-4, 10);
+    ctx.lineTo(-4, 0);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-4, 6);
+    ctx.lineTo(-8, 12);
+    ctx.lineTo(-4, 12);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(4, 6);
+    ctx.lineTo(8, 12);
+    ctx.lineTo(4, 12);
+    ctx.closePath();
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.anisotropy = 4;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function UniversityCrest({ position, university }: { position: [number, number, number]; university: University }) {
+  const tex = useMemo(() => createUniversityCrestTexture(university), [university]);
+  return (
+    <group position={position}>
+      <mesh castShadow>
+        <boxGeometry args={[1.2, 1.2, 0.08]} />
+        <meshStandardMaterial color="#B8860B" metalness={0.85} roughness={0.3} />
+      </mesh>
+      <mesh position={[0, 0, 0.05]}>
+        <planeGeometry args={[1.0, 1.0]} />
+        <meshStandardMaterial map={tex} roughness={0.7} />
+      </mesh>
+    </group>
+  );
+}
+
+function GeniusPortrait({ position, genius }: { position: [number, number, number]; genius: Genius }) {
+  const tex = useMemo(() => createGeniusPortraitTexture(genius), [genius]);
+  return (
+    <group position={position}>
+      <mesh castShadow>
+        <boxGeometry args={[1.0, 1.25, 0.08]} />
+        <meshStandardMaterial color="#B8860B" metalness={0.85} roughness={0.3} />
+      </mesh>
+      <mesh position={[0, 0, 0.05]}>
+        <planeGeometry args={[0.82, 1.07]} />
+        <meshStandardMaterial map={tex} roughness={0.7} />
+      </mesh>
+    </group>
+  );
+}
 // ============== COFFERED CEILING ==============
 function CofferedCeiling({ tex }: { tex: THREE.Texture }) {
   return (
@@ -1069,11 +1535,37 @@ function SceneInner({
           {/* Globo terráqueo */}
           <Globe position={[6, 0, 5.5]} tex={tex} />
 
-          {/* Retrato al óleo */}
-          <Portrait position={[0, 4.5, -6.9]} tex={tex} />
+          {/* Retrato al óleo removido — reemplazado por galería de genios */}
 
           {/* Reloj de pared */}
           <WallClock position={[-9, 4, -6.9]} tex={tex} />
+
+          {/* 🏛️ GALERÍA: 5 universidades (crests heráldicos) — fila superior */}
+          {UNIVERSITIES.map((u, i) => (
+            <UniversityCrest
+              key={u.id}
+              university={u}
+              position={[-8 + i * 4, 6.3, -6.9]}
+            />
+          ))}
+
+          {/* 🧠 GALERÍA: 5 genios — fila media */}
+          {GENIUSES.slice(0, 5).map((g, i) => (
+            <GeniusPortrait
+              key={g.id}
+              genius={g}
+              position={[-8 + i * 4, 3.2, -6.9]}
+            />
+          ))}
+
+          {/* 🧠 GALERÍA: 5 genios — fila inferior */}
+          {GENIUSES.slice(5, 10).map((g, i) => (
+            <GeniusPortrait
+              key={g.id}
+              genius={g}
+              position={[-8 + i * 4, 0.9, -6.9]}
+            />
+          ))}
 
           {/* Detalles en la mesa */}
           <OpenBook position={[-1, 0.86, 2.5]} tex={tex} />
