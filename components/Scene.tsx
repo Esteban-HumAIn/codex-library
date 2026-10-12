@@ -174,11 +174,20 @@ function CofferedCeiling({ tex }: { tex: THREE.Texture }) {
 
 // ============== BRASS CHANDELIER ==============
 function Chandelier({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) {
-  const [time, setTime] = useState(0);
-  useFrame((_, delta) => setTime((t) => t + delta));
+  const flameRefs = useRef<(THREE.Mesh | null)[]>([]);
 
   // 6 brazos con velas (candles)
   const arms = 6;
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    flameRefs.current.forEach((mesh, i) => {
+      if (mesh) {
+        const s = 1 + Math.sin(t * 3 + i) * 0.2;
+        mesh.scale.set(s, s, s);
+      }
+    });
+  });
   return (
     <group position={position} scale={scale}>
       {/* Cadena de suspensión */}
@@ -223,8 +232,8 @@ function Chandelier({ position, scale = 1 }: { position: [number, number, number
               <meshStandardMaterial color="#F5E6D3" roughness={0.8} />
             </mesh>
             {/* Llama (flame) */}
-            <mesh position={[x, 0.32, z]}>
-              <sphereGeometry args={[0.025 + Math.sin(time * 3 + i) * 0.005, 8, 8]} />
+            <mesh position={[x, 0.32, z]} ref={(el) => { flameRefs.current[i] = el; }}>
+              <sphereGeometry args={[0.025, 8, 8]} />
               <meshStandardMaterial
                 color="#FFAA33"
                 emissive="#FFB050"
@@ -1030,7 +1039,7 @@ function SceneInner({
         intensity={1.3}
         color="#FFE5B5"
         castShadow
-        shadow-mapSize={[2048, 2048]}
+        shadow-mapSize={[1024, 1024]}
         shadow-camera-far={20}
         shadow-camera-left={-12}
         shadow-camera-right={12}
@@ -1100,7 +1109,7 @@ function SceneInner({
           <Plant position={[7, 0, 5.5]} tex={tex} />
 
           {/* Polvo dorado en el aire */}
-          <DustMotes />
+          {/* DustMotes removido — partículas flotantes que calentaban el dispositivo */}
         </>
       )}
 
