@@ -713,6 +713,8 @@ export const TOPICS: Topic[] = [
 ];
 
 export const SHELVES = [
-  { num: "I", label: "Codex I", ids: ["economia", "filosofia", "computacion", "historia", "psicologia"] },
-  { num: "II", label: "Codex II", ids: ["sistemas", "fisica", "matematicas", "biologia"] },
+  { num: "I", label: "Codex I", ids: ["economia", "filosofia"] },
+  { num: "II", label: "Codex II", ids: ["computacion", "historia"] },
+  { num: "III", label: "Codex III", ids: ["psicologia", "sistemas"] },
+  { num: "IV", label: "Codex IV", ids: ["fisica", "matematicas", "biologia"] },
 ];

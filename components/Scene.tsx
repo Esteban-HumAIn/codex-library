@@ -29,16 +29,17 @@ import {
 export const SCENE_TOPICS = TOPICS;
 export const SCENE_SHELVES = SHELVES;
 
+// Paleta clásica de librería: cuero, oxblood, verde botella, azul marino
 const COLORS: Record<string, string> = {
-  fisica: "#7A1F12",
-  matematicas: "#1E3A6E",
-  biologia: "#1F5C2E",
-  economia: "#7A5612",
-  filosofia: "#4A1F70",
-  computacion: "#0A445A",
-  historia: "#6A1F0A",
-  psicologia: "#7A1240",
-  sistemas: "#3A4150",
+  fisica: "#5C2A1A",        // cuero oxblood
+  matematicas: "#1E3A6E",   // azul marino clásico
+  biologia: "#2A4A2A",      // verde botella
+  economia: "#4A2818",      // cuero marrón oscuro
+  filosofia: "#3A1E2A",     // vino oscuro / burdeos
+  computacion: "#1E2A4A",   // azul medianoche
+  historia: "#3D2817",      // cuero antiguo
+  psicologia: "#4A2A1E",    // siena tostado
+  sistemas: "#2A2A2E",      // gris grafito
 };
 
 function getBookColor(book: Book, topic: Topic): string {
@@ -430,7 +431,7 @@ function BookcaseShelf({
 }) {
   const shelfY = useMemo(() => {
     const idx = SHELVES.findIndex((s) => s.num === shelf.num);
-    return idx * 0.8;
+    return idx * 0.5;
   }, [shelf.num]);
 
   const shelfBooks = useMemo(() => {
@@ -570,10 +571,10 @@ function Book3D({
         <boxGeometry args={[w, h, d]} />
         <meshStandardMaterial
           color={color}
-          roughness={0.5}
-          metalness={book.jades_pick ? 0.4 : 0.1}
+          roughness={0.85}
+          metalness={0.05}
           emissive={hover ? color : "#000000"}
-          emissiveIntensity={hover ? 0.3 : 0}
+          emissiveIntensity={hover ? 0.2 : 0}
         />
       </mesh>
       {book.jades_pick && (
@@ -593,11 +594,11 @@ function Book3D({
 }
 
 function bookWidth(book: Book): number {
-  return 0.16 + ((hash(book.id) * 5) % 5) / 100;
+  return 0.18 + ((hash(book.id) * 5) % 6) / 100;
 }
 
 function bookHeight(book: Book): number {
-  return 0.32 + ((hash(book.id) * 5) % 10) / 100;
+  return 0.35 + ((hash(book.id) * 5) % 8) / 100;
 }
 
 function hash(s: string): number {
