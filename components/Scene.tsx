@@ -1167,6 +1167,198 @@ function Window({ tex }: { tex: TexCache }) {
   );
 }
 
+// ============== MARCUS AURELIUS EQUESTRIAN STATUE ==============
+// Réplica simplificada de la estatua ecuestre de Marco Aurelio (original en Museos Capitolinos, Roma, ~175 d.C.)
+// Construida con primitivos: caballo parado con pata delantera derecha levantada, jinete con brazo derecho extendido, pedestal de mármol
+function MarcusAureliusStatue({ position }: { position: [number, number, number] }) {
+  // Material bronze (color del original)
+  const bronze = "#8B6914";
+  const bronzeDark = "#5C3A1E";
+  const marble = "#D5C9A8";
+
+  return (
+    <group position={position}>
+      {/* ============ PEDESTAL (mármol) ============ */}
+      <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
+        <boxGeometry args={[2.2, 0.6, 1.2]} />
+        <meshStandardMaterial color={marble} roughness={0.5} metalness={0.05} />
+      </mesh>
+      {/* Placa de inscripción (dorado) */}
+      <mesh position={[0, 0.3, 0.61]}>
+        <planeGeometry args={[1.6, 0.2]} />
+        <meshStandardMaterial color={bronze} metalness={0.85} roughness={0.3} />
+      </mesh>
+
+      {/* ============ CABALLO ============ */}
+      <group position={[0, 0.6, 0]}>
+        {/* Cuerpo principal */}
+        <mesh position={[0, 1.1, 0]} castShadow>
+          <boxGeometry args={[0.7, 0.85, 1.9]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Pecho (más ancho) */}
+        <mesh position={[0, 0.9, 0.75]} castShadow>
+          <boxGeometry args={[0.8, 0.75, 0.4]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Grupa (trasera) */}
+        <mesh position={[0, 1.15, -0.75]} castShadow>
+          <boxGeometry args={[0.75, 0.7, 0.5]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+
+        {/* 4 patas (3 apoyadas + 1 levantada) */}
+        {/* Pata delantera izquierda (apoyada) */}
+        <mesh position={[-0.28, 0.3, 0.6]} castShadow>
+          <cylinderGeometry args={[0.09, 0.07, 0.7, 8]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Pata delantera derecha — LEVANTADA (pose original) */}
+        <mesh position={[0.28, 0.7, 0.85]} rotation={[0.4, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.09, 0.07, 0.7, 8]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Pata trasera izquierda */}
+        <mesh position={[-0.28, 0.3, -0.6]} castShadow>
+          <cylinderGeometry args={[0.09, 0.07, 0.7, 8]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Pata trasera derecha */}
+        <mesh position={[0.28, 0.3, -0.6]} castShadow>
+          <cylinderGeometry args={[0.09, 0.07, 0.7, 8]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Cascos (4) */}
+        {[
+          [-0.28, 0.62, 0.62],
+          [0.28, 0.62, -0.62],
+          [-0.28, 0.62, -0.62],
+          [0.28, 0.62, 0.62],
+        ].map(([x, y, z], i) => (
+          <mesh key={i} position={[x, y, z]} castShadow>
+            <cylinderGeometry args={[0.1, 0.08, 0.08, 8]} />
+            <meshStandardMaterial color={bronzeDark} metalness={0.8} roughness={0.3} />
+          </mesh>
+        ))}
+
+        {/* Cuello (angulado hacia arriba y adelante) */}
+        <mesh position={[0, 1.75, 0.85]} rotation={[-0.6, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.16, 0.22, 0.75, 8]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Cabeza del caballo */}
+        <mesh position={[0, 2.15, 1.15]} rotation={[-0.3, 0, 0]} castShadow>
+          <boxGeometry args={[0.28, 0.35, 0.55]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Hocico */}
+        <mesh position={[0, 2.05, 1.45]} rotation={[-0.2, 0, 0]} castShadow>
+          <boxGeometry args={[0.2, 0.2, 0.15]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Orejas (2) */}
+        {[-0.1, 0.1].map((x, i) => (
+          <mesh key={i} position={[x, 2.38, 1.1]} castShadow>
+            <coneGeometry args={[0.05, 0.13, 6]} />
+            <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+          </mesh>
+        ))}
+        {/* Crin (3 segmentos a lo largo del cuello) */}
+        {[-0.18, 0, 0.18].map((x, i) => (
+          <mesh key={i} position={[x, 1.95, 0.85]} castShadow>
+            <boxGeometry args={[0.06, 0.18, 0.25]} />
+            <meshStandardMaterial color={bronzeDark} metalness={0.6} roughness={0.5} />
+          </mesh>
+        ))}
+        {/* Cola (angulada hacia atrás y abajo) */}
+        <mesh position={[0, 1.15, -1.15]} rotation={[0.5, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.06, 0.09, 0.7, 6]} />
+          <meshStandardMaterial color={bronzeDark} metalness={0.6} roughness={0.5} />
+        </mesh>
+      </group>
+
+      {/* ============ JINETE (MARCO AURELIO) ============ */}
+      <group position={[0, 1.5, 0]}>
+        {/* Caderas (sentado) */}
+        <mesh position={[0, 0.15, 0.1]} castShadow>
+          <boxGeometry args={[0.55, 0.3, 0.45]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Caparrón/cuirass (torso con armadura) */}
+        <mesh position={[0, 0.7, 0.1]} castShadow>
+          <boxGeometry args={[0.6, 0.75, 0.4]} />
+          <meshStandardMaterial color={bronze} metalness={0.8} roughness={0.35} />
+        </mesh>
+        {/* Pteruges (faldones de la armadura, 3 tiras) */}
+        {[-0.1, 0, 0.1].map((z, i) => (
+          <mesh key={i} position={[0, 0.4, 0.35 + z]} castShadow>
+            <boxGeometry args={[0.55, 0.2, 0.04]} />
+            <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+          </mesh>
+        ))}
+        {/* Paludamentum (capa) detrás */}
+        <mesh position={[0, 0.7, -0.25]} castShadow>
+          <boxGeometry args={[0.65, 0.85, 0.06]} />
+          <meshStandardMaterial color={bronzeDark} metalness={0.6} roughness={0.5} />
+        </mesh>
+
+        {/* Cabeza */}
+        <mesh position={[0, 1.3, 0.15]} castShadow>
+          <sphereGeometry args={[0.2, 16, 16]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Barba (estilo Marco Aurelio) */}
+        <mesh position={[0, 1.18, 0.32]} castShadow>
+          <sphereGeometry args={[0.1, 8, 8]} />
+          <meshStandardMaterial color={bronzeDark} metalness={0.6} roughness={0.5} />
+        </mesh>
+        {/* Cabello (curvado sobre la frente) */}
+        <mesh position={[0, 1.42, 0.08]} castShadow>
+          <sphereGeometry args={[0.22, 12, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
+          <meshStandardMaterial color={bronzeDark} metalness={0.6} roughness={0.5} />
+        </mesh>
+
+        {/* Brazo derecho EXTENDIDO (pose icónica — originalmente sostenía algo) */}
+        <mesh position={[0.4, 0.85, 0.35]} rotation={[0, -0.2, -1.0]} castShadow>
+          <cylinderGeometry args={[0.07, 0.06, 0.7, 8]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Mano derecha (puño cerrado) */}
+        <mesh position={[0.7, 0.55, 0.55]} castShadow>
+          <sphereGeometry args={[0.08, 8, 8]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+
+        {/* Brazo izquierdo (sosteniendo riendas) */}
+        <mesh position={[-0.3, 0.85, 0.3]} rotation={[0.6, 0.3, 0.6]} castShadow>
+          <cylinderGeometry args={[0.07, 0.06, 0.55, 8]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+        {/* Mano izquierda */}
+        <mesh position={[-0.45, 0.55, 0.6]} castShadow>
+          <sphereGeometry args={[0.07, 8, 8]} />
+          <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+        </mesh>
+
+        {/* Piernas (2, drapadas en tela) */}
+        {[-0.16, 0.16].map((x, i) => (
+          <mesh key={i} position={[x, 0.2, 0.35]} castShadow>
+            <boxGeometry args={[0.16, 0.35, 0.35]} />
+            <meshStandardMaterial color={bronze} metalness={0.75} roughness={0.4} />
+          </mesh>
+        ))}
+        {/* Pies (2) */}
+        {[-0.16, 0.16].map((x, i) => (
+          <mesh key={i} position={[x, 0.02, 0.5]} castShadow>
+            <boxGeometry args={[0.14, 0.08, 0.22]} />
+            <meshStandardMaterial color={bronzeDark} metalness={0.7} roughness={0.4} />
+          </mesh>
+        ))}
+      </group>
+    </group>
+  );
+}
+
 function Bust({ position, tex }: { position: [number, number, number]; tex: TexCache }) {
   return (
     <group position={position}>
@@ -1529,6 +1721,9 @@ function SceneInner({
           <Rug position={[0, 0.005, 2.5]} tex={tex} />
 
           {/* Busto removido */}
+
+          {/* 🏛️ Estatua ecuestre de Marco Aurelio (réplica con primitivos) */}
+          <MarcusAureliusStatue position={[7, 0, 1]} />
 
           {/* Globo terráqueo */}
           <Globe position={[6, 0, 5.5]} tex={tex} />
