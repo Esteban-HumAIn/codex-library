@@ -203,7 +203,7 @@ export const TOPICS: Topic[] = [
           "altruismo",
           "estrategia evolutivamente estable"
         ],
-        "synthesis": "Dawkins argumenta que la selección natural no opera sobre los organismos, ni sobre las especies, sino sobre los genes. Los organismos somos 'vehículos' temporales construidos por los genes para asegurar su propia replicación. Esta inversión del punto de vista (de organismo-centrado a gen-centrado) explica fenómenos que antes eran misteriosos: el altruismo entre parientes, el conflicto entre padres e hijos, la evolución de la cooperación, el sexo como estrategia contra parásitos. Es un libro que cambia cómo pensás sobre la vida — y,顺便, sobre la inteligencia artificial (que en el fondo es algoritmos replicándose).",
+        "synthesis": "Dawkins argumenta que la selección natural no opera sobre los organismos, ni sobre las especies, sino sobre los genes. Los organismos somos 'vehículos' temporales construidos por los genes para asegurar su propia replicación. Esta inversión del punto de vista (de organismo-centrado a gen-centrado) explica fenómenos que antes eran misteriosos: el altruismo entre parientes, el conflicto entre padres e hijos, la evolución de la cooperación, el sexo como estrategia contra parásitos. Es un libro que cambia cómo pensás sobre la vida — y, de paso, sobre la inteligencia artificial (que en el fondo es algoritmos replicándose).",
         "reading_plan": "2-3 semanas. Releer los capítulos sobre estrategia evolutivamente estable con cuidado."
       },
       {
@@ -319,6 +319,28 @@ export const TOPICS: Topic[] = [
         ],
         "synthesis": "Kahneman divide la mente en dos sistemas: Sistema 1 (rápido, intuitivo, emocional) y Sistema 2 (lento, deliberado, lógico). La mayor parte de las decisiones las toma el Sistema 1, y eso explica por qué somos irracionales de maneras predecibles. Los capítulos sobre aversión a la pérdida (perder $100 duele más de lo que ganar $100 alegra) y efecto ancla (la primera cifra que ves distorsiona tu juicio) son lectura obligatoria para cualquier persona que negocia o invierte. Es uno de los pocos libros de psicología que cambia cómo tomás decisiones el lunes a la mañana.",
         "reading_plan": "1-2 meses. Aplicar cada sesgo a una decisión real que hayas tomado."
+      },
+      {
+        "id": "acemoglu-why-nations-fail",
+        "title": "Por qué fracasan los países",
+        "author": "Daron Acemoglu · James A. Robinson",
+        "year": 2012,
+        "isbn": "9788423412662",
+        "language": "EN (trad. ES: Deusto)",
+        "rank": 4,
+        "jades_pick": false,
+        "cosecha_pdf": "/assets/por_que_fracasan_los_paises.pdf",
+        "depth": "intermedio",
+        "why_this_book": "El libro que convirtió la historia económica comparada en un argumento sobre instituciones inclusivas y extractivas. No pregunta por qué unos países son ricos y otros pobres, sino por qué los mismos países son hoy más pobres que antes: la pregunta es diagonal, a través del tiempo en la misma sociedad. Es el mejor manual para entender por qué la geografía y la cultura no explican nada por sí solas, y por qué el legado colonial sigue decidiendo trayectorias económicas un siglo y medio después.",
+        "key_concepts": [
+          "instituciones inclusivas y extractivas",
+          "deriva institucional",
+          "coyunturas críticas",
+          "inversión de la fortuna",
+          "acceso limitado y acceso abierto"
+        ],
+        "synthesis": "La tesis en una frase: la prosperidad de un país depende, en el largo plazo, de si sus instituciones políticas y económicas son inclusivas —las que permiten que muchos participen y que se recompense la innovación— o extractivas, las que permiten que una minoría capture la riqueza de todos. Y esas instituciones no son un accidente geográfico ni cultural: se heredan de la historia colonial y se perpetúan porque benefician a quienes las sostienen. El caso de Nogales abre el libro como experimento natural: dos ciudades separadas por un río, con historia colonial opuesta, y un NIST que no cambió en 120 años. La fuerza del argumento está en la combinación de mecanismos: los estados extractivos toleran que la prosperidad se filtre hacia arriba porque el costo de reprimir la innovación es más alto que el beneficio de cobrarla; y las coyunturas críticas son ventanas estrechas donde una sociedad puede torcer su trayectoria. La crítica estándar —que el marco explica más de lo que falsifica— sigue en pie y está documentada, con fuentes, en la cosecha.",
+        "reading_plan": "3 semanas, 5 capítulos por semana. Leer el Apéndice B del PDF como mapa de paginación de la edición Deusto. Leer el capítulo 7 (China) junto con Poder y progreso (2023)."
       }
     ]
   },
