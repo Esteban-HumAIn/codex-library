@@ -341,6 +341,154 @@ export const TOPICS: Topic[] = [
         ],
         "synthesis": "La tesis en una frase: la prosperidad de un país depende, en el largo plazo, de si sus instituciones políticas y económicas son inclusivas —las que permiten que muchos participen y que se recompense la innovación— o extractivas, las que permiten que una minoría capture la riqueza de todos. Y esas instituciones no son un accidente geográfico ni cultural: se heredan de la historia colonial y se perpetúan porque benefician a quienes las sostienen. El caso de Nogales abre el libro como experimento natural: dos ciudades separadas por un río, con historia colonial opuesta, y un NIST que no cambió en 120 años. La fuerza del argumento está en la combinación de mecanismos: los estados extractivos toleran que la prosperidad se filtre hacia arriba porque el costo de reprimir la innovación es más alto que el beneficio de cobrarla; y las coyunturas críticas son ventanas estrechas donde una sociedad puede torcer su trayectoria. La crítica estándar —que el marco explica más de lo que falsifica— sigue en pie y está documentada, con fuentes, en la cosecha.",
         "reading_plan": "3 semanas, 5 capítulos por semana. Leer el Apéndice B del PDF como mapa de paginación de la edición Deusto. Leer el capítulo 7 (China) junto con Poder y progreso (2023)."
+      },
+      {
+        "id": "ang-how-china-escaped",
+        "title": "How China Escaped the Poverty Trap",
+        "author": "Yuen Yuen Ang",
+        "year": 2016,
+        "isbn": "9781501700200",
+        "language": "EN",
+        "rank": 5,
+        "jades_pick": true,
+        "cosecha_pdf": "/assets/como_crecio_china.pdf",
+        "depth": "intermedio",
+        "why_this_book": "El libro que mejor responde una pregunta incomoda: si China tenía instituciones extractivas, mercados incompletos y un partido único, ¿por qué creció más rápido que nadie? La respuesta de Ang no es que China tuviera buenos mercados, sino que administró la tierra y el capital con mano firme mientras dejaba que el trabajo funcionara como mercado real. Ningún otro libro del debate chino está escrito con ese nivel de mecanismo explícito.",
+        "key_concepts": [
+          "mercado de factores ficticio",
+          "improvisación dirigida",
+          "coevolución",
+          "franquicia burocrática",
+          "administración de la tierra"
+        ],
+        "synthesis": "Ang separa cuatro factores —tierra, capital, trabajo y trabajo de dirección— y muestra que China combinó dos lógicas a la vez: la tierra y el capital se asignaron administrativamente, con precios que no son precios de mercado, y el trabajo sí operó como mercado real, con migración rural, salarios reales y competencia entre empresas. El resultado fue un sistema que no era ni plan ni mercado, y que funcionó. Sobre eso añade tres movimientos: improvisación dirigida (se prueba en zona piloto, se escala si funciona, se congela si no), coevolución (copiar y adaptar al contexto local, no traducir) y una tesis final más general, la del capítulo 7: China resolvió mejor que nadie el problema general de los países en desarrollo, el de construir industria antes de tener los mercados, el capital y las instituciones que otros Estados tratan como requisitos previos. La crítica estándar —que la improvisación dirigida es difícil de refutar— está documentada con su peso real en la cosecha.",
+        "reading_plan": "4 semanas. Empezá por los capítulos 1, 2 y 4, que son el mecanismo; usá la tabla de contenido del Apéndice B de la cosecha como mapa de paginación. El capítulo 7 es la tesis general y va al final."
+      },
+      {
+        "id": "naughton-chinese-economy",
+        "title": "The Chinese Economy: Transitions and Growth",
+        "author": "Barry Naughton",
+        "year": 2007,
+        "isbn": "9780262534796",
+        "language": "EN",
+        "rank": 6,
+        "jades_pick": false,
+        "depth": "avanzado",
+        "why_this_book": "El contrapeso de Naughton al libro de Ang: 528 páginas que documentan la transición china con datos, instituciones y detalle de contador. Donde Ang dice improvisación local, Naughton muestra planificación central, bancos de desarrollo y control de precios administrados. Es el libro al que volvés cuando algo no cuadra, y el mejor manual técnico de la lista.",
+        "key_concepts": [
+          "township and village enterprises",
+          "transición de mercado",
+          "banca pública",
+          "desdualismo urbano-rural",
+          "acumulación primitiva"
+        ],
+        "synthesis": "El mapa de referencia del sistema económico chino entre 1949 y 2007, con la ventaja de que no idealiza ni condena: describe. El libro desarma la transición como lo que fue, un traslape de dos lógicas —plan en el sector pesado, mercado en la agricultura y en el comercio— en lugar de una ruptura con el pasado. Por eso es el contrapeso perfecto de Ang: no lo refuta, lo aterriza. La parte más útil para entender el modelo actual es la comparación con la industria de las villas y los pueblos, que explica por qué la industrialización china no pasó por grandes fábricas estatales, sino por miles de empresas locales de escala pequeña, y por qué ese patrón es el que la política industrial de los años 2010 vino a corregir.",
+        "reading_plan": "No es un libro de leer de corrido: 6 semanas por partes. Capítulos 3 a 5 para la transición, 12 a 14 para la industria, 19 para el sistema financiero y 20 para el costo ambiental, que es donde está la letra chica del modelo."
+      },
+      {
+        "id": "truex-making-autocracy-work",
+        "title": "Making Autocracy Work",
+        "author": "Rory Truex",
+        "year": 2016,
+        "isbn": "9781316623701",
+        "language": "EN",
+        "rank": 7,
+        "jades_pick": false,
+        "depth": "intermedio",
+        "why_this_book": "La pregunta que falta en el resto de la bibliografía: si China es un régimen de partido único, ¿cómo se toman las decisiones? Truex responde que el sistema funciona porque el partido construyó una representación dentro de límites, con diputados que trasladan necesidades reales de sus constituyentes en todo lo que no es sensible. Es el contrapeso político de la lista, y el más legible de todos.",
+        "key_concepts": [
+          "representación dentro de límites",
+          "consulta a la base",
+          "incentivos de los funcionarios",
+          "rendición de cuentas sin democracia",
+          "dividendos de crecimiento"
+        ],
+        "synthesis": "El libro desmonta la caricatura de que China es un sistema autoritario opaco y muestra un mecanismo mucho más fino: un partido que necesita información que sus burócratas locales no le van a dar, y que resuelve con canales formalizados de opinión. La tesis es que el sistema es autoritario en lo político y funcional en lo económico, y que esa combinación tiene un costo conocido: funciona bien mientras el crecimiento pague la legitimidad. Por eso es la lectura clave si querés entender el momento actual del modelo, cuando el crecimiento dejó de ser el argumento central del contrato.",
+        "reading_plan": "3 semanas. Es el libro más corto y el más rápido: leelo de corrido y volvé al capítulo sobre economía cuando termines el de Ang."
+      },
+      {
+        "id": "pei-chinas-crony-capitalism",
+        "title": "China's Crony Capitalism",
+        "author": "Minxin Pei",
+        "year": 2016,
+        "isbn": "9780674974340",
+        "language": "EN",
+        "rank": 8,
+        "jades_pick": false,
+        "depth": "intermedio",
+        "why_this_book": "El libro que pone precio al modelo. Pei documenta el momento en que el Estado chino dejó de favorecer la competencia entre empresas y empezó a repartir mercados: el sector público absorbió la corrupción como sistema de asignación en lugar de combatirse como una anomalía. Es el contrapeso indispensable de Ang, porque cuenta la historia del éxito y la de su conversión en un sistema de captura.",
+        "key_concepts": [
+          "capitalismo de connivencia",
+          "compra de monopolios",
+          "corrupción como sistema de asignación",
+          "monopolio por compra",
+          "captura regulatoria"
+        ],
+        "synthesis": "Pei sostiene que la corrupción china no es un residuo de un sistema que se moderniza, sino el principio de asignación del sistema. Cuando la competencia se vuelve costosa, el camino más rentable para una empresa es comprar el monopolio en lugar de ganarlo, y el Estado cobra peaje a cambio de protección. La consecuencia es un modelo que crece rápido porque baja el riesgo de hacer negocios en clave política, y que reparte las ganancias hacia los conectados en lugar de hacia los más eficientes. Leído junto con Ang, el par explica la mayor tensión del modelo: el mecanismo que lo hizo eficiente es el mismo que lo está dejando de ser.",
+        "reading_plan": "2 semanas. Leelo después de Ang y no antes: es un libro de diagnóstico, y sin el mecanismo de Ang los capítulos se leen como una lista de quejas sin causa."
+      },
+      {
+        "id": "lardy-state-strikes-back",
+        "title": "The State Strikes Back",
+        "author": "Nicholas R. Lardy",
+        "year": 2019,
+        "isbn": "9780881327373",
+        "language": "EN",
+        "rank": 9,
+        "jades_pick": false,
+        "depth": "avanzado",
+        "why_this_book": "El parte médico más reciente de Lardy sobre el modelo: el Estado chino retomó el control de precios y de sectores que había dejado liberalizar, y el título ya lo dice sin rodeos. Es la lectura de actualización que necesitás si leíste Ang en 2016 y querés saber cuánto de ese argumento todavía aguanta.",
+        "key_concepts": [
+          "retorno del Estado",
+          "precios administrados",
+          "deuda de los municipios",
+          "sobreendeudamiento municipal",
+          "transición a paso lento"
+        ],
+        "synthesis": "Lardy cierra su lectura de la transición con el punto de inflexión: el sobreendeudamiento de los municipios y de las empresas de la plataforma local, la intervención en los precios de la energía y el giro hacia un Estado que vuelve a decidir. La tesis es que China no está en una crisis de crecimiento sino en un giro de modelo, y que el éxito anterior explica las tentaciones del nuevo. Es también el mejor libro para entender la diferencia entre lo que dice la prensa y lo que miden los datos. Lectura de actualización, no de primera lectura.",
+        "reading_plan": "2 semanas, después de Ang y de Naughton. No lo leas como primera puerta: su valor es el contraste temporal, y sin la base conceptual se pierde."
+      },
+      {
+        "id": "economy-el-mundo-segun-china",
+        "title": "El mundo según China",
+        "author": "Elizabeth C. Economy",
+        "year": 2023,
+        "isbn": "9788413845173",
+        "language": "ES (La Esfera de los Libros)",
+        "rank": 10,
+        "jades_pick": false,
+        "depth": "introductorio",
+        "why_this_book": "El único libro de la lista en español, y el contrapeso más cercano a la voz china: Economy trabajó años en la oficina de investigación del Consejo de Estado de China. Si querés leer un libro sobre China sin pasar por el inglés, es el que hay que leer: no es el mejor, pero es la puerta de entrada honesta.",
+        "key_concepts": [
+          "China real, no China oficial",
+          "la Ruta de la Seda",
+          "la escala de las decisiones",
+          "desacuerdo con la narrativa",
+          "mirar mecanismos y no consignas"
+        ],
+        "synthesis": "Un libro de ensayos que hace un trabajo poco común: mira los mecanismos concretos en vez de las narrativas, y deja ver tanto los límites del modelo como su potencia. Funciona como contrapeso de los libros de mecanismo, porque no está escrito desde la pregunta por el crecimiento, sino desde la pregunta por el poder y la escala. Se lee rápido y deja ideas que se pueden contrastar con las de los demás.",
+        "reading_plan": "1 semana, de corrido, como puerta de entrada antes de Ang. Sirve para tener preguntas, no respuestas."
+      },
+      {
+        "id": "acemoglu-power-and-progress",
+        "title": "Power and Progress",
+        "author": "Daron Acemoglu · Simon Johnson",
+        "year": 2023,
+        "isbn": "9781541702547",
+        "language": "EN",
+        "rank": 11,
+        "jades_pick": false,
+        "depth": "intermedio",
+        "why_this_book": "El puente con Por qué fracasan los países. Acemoglu y Johnson reformulan el problema: no se trata solo de instituciones económicas, sino de quién tiene el poder político. Su tesis es que el poder político concentrado es una condición del crecimiento, que esa concentración tiene un precio en democracia, y que el canje es el debate real del siglo XXI. China es el ejemplo central, y por eso el libro que hace la pregunta incómoda: si el canje funciona, ¿por qué exigir la otra mitad?",
+        "key_concepts": [
+          "poder político y crecimiento",
+          "instituciones extractivas",
+          "el canje",
+          "China como anomalía",
+          "legitimidad por crecimiento"
+        ],
+        "synthesis": "Los autores no abandonan su marco de hace una década: lo llevan a su conclusión incómoda. Si la concentración de poder es lo que habilitó el despegue, entonces la teoría institucional tiene que explicar por qué China fue la excepción y no el caso normal. La pregunta que deja abierta es la que más importa para los próximos años: qué le ocurre a una economía construida por ese poder cuando el poder deja de necesitar el crecimiento para legitimarse. Leído después de Ang, el libro se vuelve el cierre natural del track.",
+        "reading_plan": "3 semanas, al final. Leelo después de Ang y de Naughton, y usá la cosecha como mapa: el capítulo sobre China del libro de AJR y este libro forman el cierre de este track."
       }
     ]
   },
